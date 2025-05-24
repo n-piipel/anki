@@ -1,4 +1,4 @@
-/* pAnki Flashcards CSS - Version 1.1 - Buttons 4x1, Fast transitions */
+/* pAnki Flashcards CSS - Version 1.9 - Fixed text centering and button spacing */
 /* Reset and Base Styles */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -359,20 +359,18 @@ body {
 
 .flashcard-back {
     transform: rotateY(180deg);
-    padding-bottom: calc(var(--space-xl) + var(--space-lg) + 80px + var(--space-xl) + var(--space-lg));
-}
-
-.flashcard-back .card-content {
-    padding-bottom: 0;
 }
 
 .card-content {
-    flex: 1;
+    position: absolute;
+    top: var(--space-xl);
+    left: var(--space-xl);
+    right: var(--space-xl);
+    bottom: 140px; /* Fixed space for buttons */
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    position: relative;
 }
 
 .question-text,
@@ -405,9 +403,10 @@ body {
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-md);
     position: absolute;
-    bottom: calc(var(--space-xl) + var(--space-lg));
+    bottom: var(--space-xl);
     left: var(--space-xl);
     right: var(--space-xl);
+    height: 80px;
 }
 
 .difficulty-btn {
@@ -844,167 +843,6 @@ body {
     text-decoration: underline;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        gap: var(--space-md);
-        text-align: center;
-    }
-    
-    .nav {
-        order: -1;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
-    .nav-btn {
-        font-size: 0.75rem;
-        padding: var(--space-xs) var(--space-sm);
-    }
-    
-    .nav-btn span:first-child {
-        font-size: 1rem;
-    }
-    
-    .main {
-        padding: var(--space-lg) var(--space-sm);
-    }
-    
-    .view-header h2 {
-        font-size: 1.5rem;
-    }
-    
-    .card-sets-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .flashcard-front,
-    .flashcard-back {
-        min-height: 300px;
-        padding: var(--space-lg);
-    }
-    
-    .flashcard-back {
-        padding-bottom: calc(var(--space-lg) + var(--space-md) + 70px + var(--space-lg) + var(--space-md));
-    }
-    
-    .difficulty-buttons {
-        bottom: calc(var(--space-lg) + var(--space-md));
-        left: var(--space-lg);
-        right: var(--space-lg);
-    }
-    
-    .question-text,
-    .answer-text {
-        font-size: 1.125rem;
-    }
-    
-    .difficulty-btn {
-        height: 70px;
-        min-height: 70px;
-        padding: var(--space-sm) var(--space-xs);
-        font-size: 0.8rem;
-    }
-    
-    .btn-icon {
-        font-size: 1.5rem;
-    }
-    
-    .btn-text {
-        font-size: 0.85rem;
-    }
-    
-    .btn-interval {
-        font-size: 0.7rem;
-    }
-    
-    .stats-grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-md);
-    }
-    
-    .stats-card {
-        padding: var(--space-md);
-    }
-    
-    .streak-number {
-        font-size: 2.5rem;
-    }
-    
-    .activity-chart {
-        height: 80px;
-    }
-    
-    .stats-actions {
-        flex-direction: column;
-        gap: var(--space-sm);
-    }
-    
-    .setting-item {
-        flex-direction: column;
-        align-items: stretch;
-        gap: var(--space-sm);
-    }
-}
-
-@media (max-width: 480px) {
-    .logo {
-        font-size: 1.25rem;
-    }
-    
-    .logo-icon {
-        font-size: 1.5rem;
-    }
-    
-    .nav-btn {
-        padding: var(--space-xs) var(--space-sm);
-        font-size: 0.75rem;
-    }
-    
-    .flashcard-front,
-    .flashcard-back {
-        min-height: 250px;
-        padding: var(--space-md);
-    }
-    
-    .flashcard-back {
-        padding-bottom: calc(var(--space-md) + var(--space-sm) + 60px + var(--space-md) + var(--space-sm));
-    }
-    
-    .difficulty-buttons {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-xs);
-        bottom: calc(var(--space-md) + var(--space-sm));
-        left: var(--space-md);
-        right: var(--space-md);
-    }
-    
-    .question-text,
-    .answer-text {
-        font-size: 1.125rem;
-    }
-    
-    .difficulty-btn {
-        height: 60px;
-        min-height: 60px;
-        padding: var(--space-sm) var(--space-xs);
-        font-size: 0.75rem;
-    }
-    
-    .btn-icon {
-        font-size: 1.25rem;
-    }
-    
-    .btn-text {
-        font-size: 0.75rem;
-    }
-    
-    .btn-interval {
-        font-size: 0.65rem;
-    }
-}
-
 /* Hide back during transitions */
 .flashcard.transitioning .flashcard-back {
     display: none !important;
@@ -1131,8 +969,174 @@ body {
     color: var(--info);
 }
 
-/* Responsive notifications */
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: var(--space-md);
+        text-align: center;
+    }
+    
+    .nav {
+        order: -1;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .nav-btn {
+        font-size: 0.75rem;
+        padding: var(--space-xs) var(--space-sm);
+    }
+    
+    .nav-btn span:first-child {
+        font-size: 1rem;
+    }
+    
+    .main {
+        padding: var(--space-lg) var(--space-sm);
+    }
+    
+    .view-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .card-sets-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .flashcard-front,
+    .flashcard-back {
+        min-height: 300px;
+        padding: var(--space-lg);
+    }
+    
+    .card-content {
+        top: var(--space-lg);
+        left: var(--space-lg);
+        right: var(--space-lg);
+        bottom: 120px; /* Space for smaller buttons */
+    }
+    
+    .difficulty-buttons {
+        bottom: var(--space-lg);
+        left: var(--space-lg);
+        right: var(--space-lg);
+        height: 70px;
+    }
+    
+    .question-text,
+    .answer-text {
+        font-size: 1.125rem;
+    }
+    
+    .difficulty-btn {
+        height: 70px;
+        min-height: 70px;
+        padding: var(--space-sm) var(--space-xs);
+        font-size: 0.8rem;
+    }
+    
+    .btn-icon {
+        font-size: 1.5rem;
+    }
+    
+    .btn-text {
+        font-size: 0.85rem;
+    }
+    
+    .btn-interval {
+        font-size: 0.7rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+    }
+    
+    .stats-card {
+        padding: var(--space-md);
+    }
+    
+    .streak-number {
+        font-size: 2.5rem;
+    }
+    
+    .activity-chart {
+        height: 80px;
+    }
+    
+    .stats-actions {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+    
+    .setting-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-sm);
+    }
+}
+
 @media (max-width: 480px) {
+    .logo {
+        font-size: 1.25rem;
+    }
+    
+    .logo-icon {
+        font-size: 1.5rem;
+    }
+    
+    .nav-btn {
+        padding: var(--space-xs) var(--space-sm);
+        font-size: 0.75rem;
+    }
+    
+    .flashcard-front,
+    .flashcard-back {
+        min-height: 250px;
+        padding: var(--space-md);
+    }
+    
+    .card-content {
+        top: var(--space-md);
+        left: var(--space-md);
+        right: var(--space-md);
+        bottom: 140px; /* Space for 2x2 grid */
+    }
+    
+    .difficulty-buttons {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-xs);
+        bottom: var(--space-md);
+        left: var(--space-md);
+        right: var(--space-md);
+        height: 120px; /* Taller for 2x2 grid */
+    }
+    
+    .question-text,
+    .answer-text {
+        font-size: 1.125rem;
+    }
+    
+    .difficulty-btn {
+        height: 60px;
+        min-height: 60px;
+        padding: var(--space-sm) var(--space-xs);
+        font-size: 0.75rem;
+    }
+    
+    .btn-icon {
+        font-size: 1.25rem;
+    }
+    
+    .btn-text {
+        font-size: 0.75rem;
+    }
+    
+    .btn-interval {
+        font-size: 0.65rem;
+    }
+    
     .notification-container {
         top: var(--space-sm);
         right: var(--space-sm);
