@@ -3,9 +3,9 @@
  * Caches static resources and CSV files
  */
 
-const CACHE_NAME = 'panki-flashcards-v2.2';
-const STATIC_CACHE = 'panki-static-v2.2';
-const DATA_CACHE = 'panki-data-v2.2';
+const CACHE_NAME = 'panki-flashcards-v2.3';
+const STATIC_CACHE = 'panki-static-v2.3';
+const DATA_CACHE = 'panki-data-v2.3';
 
 // Static files for caching
 const STATIC_FILES = [
@@ -21,12 +21,11 @@ const STATIC_FILES = [
 // Data files for caching
 const DATA_FILES = [
     '/data/index.json',
-    '/data/general-knowledge.csv',
-    '/data/programming-terms.csv',
-    '/data/languages.csv',
-    '/data/math.csv',
-    '/data/general.csv',
-    '/data/gr-ru-verbs.csv'
+    '/data/greek-verbs-basic.csv',
+    '/data/greek-transport-navigation.csv',
+    '/data/greek-verbs-everyday.csv',
+    '/data/greek-connecting-words.csv',
+    '/data/greek-everyday-life.csv'
 ];
 
 /**
@@ -212,7 +211,7 @@ async function syncStudyData() {
     try {
         // Here you can implement synchronization with the server
         // For now, just log it
-        console.log('�� Syncing study data...');
+        console.log('Syncing study data...');
         
         // In the future, this could be sending statistics to the server
         return Promise.resolve();

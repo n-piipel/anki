@@ -168,7 +168,7 @@ class AnkiApp {
     
     setupTheme() {
         const themeSelect = document.getElementById('theme-select');
-        const savedTheme = this.storage.getSetting('theme') || 'light';
+        const savedTheme = this.storage.getSetting('theme') || 'auto';
         
         // Apply saved theme
         this.applyTheme(savedTheme);

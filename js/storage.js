@@ -48,7 +48,7 @@ class StorageManager {
         // Initialize settings if they don't exist
         if (!localStorage.getItem(this.keys.SETTINGS)) {
             const defaultSettings = {
-                theme: 'light',
+                theme: 'auto',
                 cardsPerSession: 20,
                 autoPlayAudio: false,
                 showTimer: true,
