@@ -862,16 +862,27 @@ class AnkiApp {
     
     async renderCardSetsProgress() {
         try {
+            console.log('📊 Rendering card sets progress...');
             const cardSets = await this.flashcardManager.getAvailableCardSets();
+            console.log('📚 Available card sets:', cardSets);
             
             if (cardSets.length === 0) {
+                console.warn('⚠️ No card sets found');
                 return '<p class="no-progress">No card sets data available</p>';
             }
-            
-            return cardSets.map(cardSet => {
+
+            const progressItems = cardSets.map(cardSet => {
+                console.log(`📋 Processing card set: ${cardSet.name} (${cardSet.id})`);
+                
+                // Get progress data from storage
                 const progress = this.storage.getCardSetProgress(cardSet.id);
+                console.log(`📈 Progress for ${cardSet.id}:`, progress);
+                
+                // Calculate progress percentage
                 const progressPercent = cardSet.totalCards > 0 ? 
                     Math.round((progress.totalCards / cardSet.totalCards) * 100) : 0;
+                
+                console.log(`📊 ${cardSet.name}: ${progress.totalCards}/${cardSet.totalCards} (${progressPercent}%)`);
                 
                 return `
                     <div class="card-set-progress-item">
@@ -888,11 +899,16 @@ class AnkiApp {
                         </div>
                     </div>
                 `;
-            }).join('');
+            });
+
+            const result = progressItems.join('');
+            console.log('✅ Card sets progress rendered successfully');
+            return result;
             
         } catch (error) {
-            console.error('Error rendering card sets progress:', error);
-            return '<p class="no-progress">Error loading progress</p>';
+            console.error('❌ Error rendering card sets progress:', error);
+            console.error('❌ Stack trace:', error.stack);
+            return `<p class="no-progress">Error loading progress: ${error.message}</p>`;
         }
     }
     
@@ -1083,6 +1099,51 @@ class AnkiApp {
      */
     showInfo(message, title = null) {
         return this.showNotification(message, 'info', title);
+    }
+
+    /**
+     * Debug function to test card sets loading
+     * Call from browser console: ankiApp.debugCardSets()
+     */
+    async debugCardSets() {
+        console.log('🧪 === DEBUG CARD SETS ===');
+        
+        try {
+            console.log('🔍 Testing flashcardManager.getAvailableCardSets()...');
+            const cardSets = await this.flashcardManager.getAvailableCardSets();
+            console.log('📚 Card sets returned:', cardSets);
+            
+            console.log('🧪 Testing each card set individually...');
+            for (const cardSet of cardSets) {
+                console.log(`📋 Card set: ${cardSet.name} (${cardSet.id})`);
+                const progress = this.storage.getCardSetProgress(cardSet.id);
+                console.log(`📊 Progress for ${cardSet.id}:`, progress);
+            }
+            
+            console.log('🧪 Testing renderCardSetsProgress()...');
+            const progressHtml = await this.renderCardSetsProgress();
+            console.log('📄 Progress HTML length:', progressHtml.length);
+            console.log('📄 Progress HTML preview:', progressHtml.substring(0, 200) + '...');
+            
+        } catch (error) {
+            console.error('❌ Debug error:', error);
+        }
+        
+        console.log('🧪 === END DEBUG ===');
+    }
+
+    /**
+     * Debug function to refresh statistics
+     * Call from browser console: ankiApp.debugRefreshStats()
+     */
+    async debugRefreshStats() {
+        console.log('🔄 === REFRESHING STATISTICS ===');
+        try {
+            await this.loadStatistics();
+            console.log('✅ Statistics refreshed successfully');
+        } catch (error) {
+            console.error('❌ Error refreshing statistics:', error);
+        }
     }
 }
 

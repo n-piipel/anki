@@ -17,20 +17,26 @@ class FlashcardManager {
      */
     async getAvailableCardSets() {
         try {
+            console.log('🔍 Getting available card sets...');
+            
             // Method 1: Try to load index.json file first (recommended approach)
             try {
+                console.log('📋 Attempting to load index.json...');
                 const indexResponse = await fetch('data/index.json');
                 if (indexResponse.ok) {
                     const indexData = await indexResponse.json();
-                    console.log('📋 Loading card sets from index.json');
+                    console.log('📋 Loading card sets from index.json:', indexData);
                     
                     const availableCardSets = [];
                     for (const cardSetInfo of indexData.cardSets) {
                         try {
+                            console.log(`🔍 Checking file: ${cardSetInfo.filename}`);
                             // Verify the file actually exists
                             const fileResponse = await fetch(`data/${cardSetInfo.filename}`, { method: 'HEAD' });
                             if (fileResponse.ok) {
+                                console.log(`✅ File exists: ${cardSetInfo.filename}`);
                                 const cardSetData = await this.getCardSetInfo(cardSetInfo.filename, cardSetInfo);
+                                console.log(`📊 Card set data:`, cardSetData);
                                 availableCardSets.push(cardSetData);
                             } else {
                                 console.warn(`📁 File ${cardSetInfo.filename} listed in index but not found`);
@@ -41,11 +47,16 @@ class FlashcardManager {
                     }
                     
                     if (availableCardSets.length > 0) {
+                        console.log(`✅ Found ${availableCardSets.length} card sets from index.json`);
                         return availableCardSets;
+                    } else {
+                        console.warn('⚠️ No valid card sets found in index.json');
                     }
+                } else {
+                    console.log('📋 index.json not found or not accessible');
                 }
             } catch (error) {
-                console.log('📋 No index.json found, falling back to automatic detection');
+                console.log('📋 No index.json found, falling back to automatic detection:', error);
             }
             
             // Method 2: Fallback - try common/popular filenames
