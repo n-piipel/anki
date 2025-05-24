@@ -381,7 +381,7 @@ body {
 .question-text::after {
     content: "👆 Click to reveal answer";
     position: absolute;
-    bottom: -2rem;
+    bottom: -4rem;
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.875rem;
