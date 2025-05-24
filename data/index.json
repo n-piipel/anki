@@ -1,0 +1,40 @@
+{
+  "cardSets": [
+    {
+      "id": "general-knowledge",
+      "name": "Общие знания",
+      "filename": "general-knowledge.csv",
+      "description": "Базовые вопросы по общим знаниям"
+    },
+    {
+      "id": "programming-terms",
+      "name": "Термины программирования", 
+      "filename": "programming-terms.csv",
+      "description": "Основные термины и концепции программирования"
+    },
+    {
+      "id": "languages",
+      "name": "Изучение языков",
+      "filename": "languages.csv",
+      "description": "Базовые фразы и приветствия на разных языках мира"
+    },
+    {
+      "id": "math",
+      "name": "Математика",
+      "filename": "math.csv",
+      "description": "Основы математики: арифметика и простые формулы"
+    },
+    {
+      "id": "general",
+      "name": "Общие знания (English)",
+      "filename": "general.csv",
+      "description": "Базовые факты о мире, истории и культуре на английском языке"
+    },
+    {
+      "id": "gr-ru-verbs",
+      "name": "Греческие глаголы",
+      "filename": "gr-ru-verbs.csv",
+      "description": "Изучение греческих глаголов с переводом на русский язык"
+    }
+  ]
+} 

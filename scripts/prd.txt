@@ -1,0 +1,107 @@
+# Product Requirements Document: Anki Flashcard Learning Service
+
+## Project Overview
+Создание одностраничного веб-приложения для изучения flashcards по системе spaced repetition (интервальных повторений), похожего на Anki, но адаптированного для публикации через GitHub Pages.
+
+## Core Requirements
+
+### 1. Platform & Architecture
+- **Static Web Application**: Одностраничное приложение (SPA) без серверной части
+- **GitHub Pages Hosting**: Приложение должно работать полностью на клиентской стороне
+- **No External Dependencies**: Никаких stateful баз данных или внешних сервисов
+- **Modern Web Technologies**: HTML5, CSS3, JavaScript (ES6+)
+
+### 2. Data Management
+- **CSV Card Sets**: Наборы карточек хранятся как CSV файлы в репозитории
+- **Version Control Integration**: Новые наборы карточек добавляются через git commits
+- **Local Storage**: Результаты изучения сохраняются в localStorage браузера
+- **No User Accounts**: Персональные данные хранятся только локально
+
+### 3. Core Features
+
+#### Flashcard Management
+- **Card Set Selection**: Пользователь может выбрать набор карточек для изучения
+- **CSV Format Support**: Поддержка стандартного формата CSV (вопрос, ответ, дополнительные поля)
+- **Multiple Card Sets**: Поддержка множественных наборов карточек
+- **Card Set Metadata**: Информация о количестве карточек, прогрессе изучения
+
+#### Learning Experience
+- **Spaced Repetition Algorithm**: Реализация алгоритма интервальных повторений
+- **Interactive Review**: Показ карточки → ответ пользователя → оценка сложности
+- **Progress Tracking**: Отслеживание прогресса изучения каждой карточки
+- **Session Management**: Возможность прерывать и возобновлять сессии изучения
+
+#### Statistics & Analytics
+- **Session Statistics**: Статистика текущей сессии (количество изученных карточек, правильные/неправильные ответы)
+- **Overall Progress**: Общая статистика по набору карточек для пользователя
+- **Performance Metrics**: Показатели эффективности изучения
+- **Historical Data**: История изучения с возможностью просмотра прогресса
+
+### 4. User Interface Requirements
+- **Responsive Design**: Адаптивный дизайн для мобильных и десктопных устройств
+- **Clean Interface**: Минималистичный и понятный интерфейс
+- **Accessibility**: Соответствие стандартам доступности (ARIA, keyboard navigation)
+- **Dark/Light Theme**: Поддержка темной и светлой темы
+
+### 5. Technical Specifications
+
+#### Frontend Architecture
+- **Single Page Application**: Вся функциональность в одном HTML файле
+- **Module Organization**: Логическое разделение кода на модули
+- **Performance Optimization**: Быстрая загрузка и отзывчивый интерфейс
+- **Browser Compatibility**: Поддержка современных браузеров
+
+#### Data Formats
+- **CSV Structure**: Стандартизированная структура CSV файлов
+- **LocalStorage Schema**: Определенная схема хранения прогресса
+- **Import/Export**: Возможность экспорта прогресса (опционально)
+
+#### Spaced Repetition Implementation
+- **Algorithm Choice**: Реализация алгоритма SM-2 или его модификации
+- **Difficulty Levels**: Система оценки сложности (Again, Hard, Good, Easy)
+- **Interval Calculation**: Автоматический расчет следующего интервала повторения
+- **Card Scheduling**: Планирование карточек на основе алгоритма
+
+### 6. File Structure
+```
+/
+├── index.html (main application)
+├── css/
+│   └── style.css
+├── js/
+│   ├── app.js (main application logic)
+│   ├── flashcard.js (card management)
+│   ├── spaced-repetition.js (SR algorithm)
+│   └── storage.js (localStorage management)
+├── data/
+│   ├── set1.csv (example card set)
+│   └── set2.csv (another card set)
+└── README.md
+```
+
+### 7. User Stories
+1. **As a learner**, I want to select a flashcard set to study
+2. **As a learner**, I want to review flashcards with spaced repetition
+3. **As a learner**, I want to see my progress and statistics
+4. **As a learner**, I want to rate the difficulty of each card
+5. **As a content creator**, I want to add new flashcard sets via CSV files
+6. **As a user**, I want my progress to persist between sessions
+
+### 8. Success Metrics
+- **Functional**: Все карточки корректно отображаются и функционируют
+- **Performance**: Приложение загружается менее чем за 3 секунды
+- **Usability**: Интуитивно понятный интерфейс без необходимости инструкций
+- **Retention**: Прогресс пользователя сохраняется и восстанавливается
+
+### 9. Constraints
+- **No Server-Side Logic**: Полностью клиентское приложение
+- **GitHub Pages Limitations**: Только статические файлы
+- **Browser Storage Limits**: Ограничения localStorage (обычно 5-10MB)
+- **CSV File Size**: Разумные ограничения на размер файлов карточек
+
+### 10. Future Enhancements (V2)
+- **Audio Support**: Поддержка аудио файлов для карточек
+- **Image Support**: Возможность добавления изображений
+- **Export/Import**: Экспорт и импорт прогресса
+- **Advanced Statistics**: Более детальная аналитика
+- **Collaborative Features**: Возможность делиться наборами карточек 

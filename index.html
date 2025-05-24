@@ -1,0 +1,217 @@
+<!--
+Place this file in the root of your GitHub Pages repo with a `cards` folder containing your card sets.
+Each set should be a CSV file in the format:
+
+  question,answer
+
+Example:
+  Capital of France,Paris
+  2+2,4
+  Hello in Spanish,Hola
+
+-->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anki Flashcards - Spaced Repetition Learning</title>
+    <meta name="description" content="Learn with flashcards using spaced repetition algorithm">
+    
+    <!-- Favicon placeholder -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css?v=1.1">
+</head>
+<body>
+    <!-- Main Application Container -->
+    <div id="app" class="app">
+        
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <span class="logo-icon">🧠</span>
+                    Anki Flashcards
+                </h1>
+                <nav class="nav">
+                    <button id="home-btn" class="nav-btn active" data-view="home">
+                        <span>📚</span> Наборы карточек
+                    </button>
+                    <button id="study-btn" class="nav-btn" data-view="study">
+                        <span>🎯</span> Изучение
+                    </button>
+                    <button id="stats-btn" class="nav-btn" data-view="stats">
+                        <span>📊</span> Статистика
+                    </button>
+                    <button id="settings-btn" class="nav-btn" data-view="settings">
+                        <span>⚙️</span> Настройки
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main">
+            
+            <!-- Home View: Card Set Selection -->
+            <section id="home-view" class="view active">
+                <div class="view-header">
+                    <h2>Выберите набор карточек для изучения</h2>
+                    <p class="view-description">Доступные наборы карточек для изучения методом интервальных повторений</p>
+  </div>
+                
+                <div class="card-sets-container">
+                    <div id="card-sets-grid" class="card-sets-grid">
+                        <!-- Card sets will be loaded here -->
+                        <div class="loading-placeholder">
+                            <div class="loading-spinner"></div>
+                            <p>Загрузка наборов карточек...</p>
+      </div>
+      </div>
+      </div>
+            </section>
+
+            <!-- Study View: Flashcard Learning -->
+            <section id="study-view" class="view">
+                <div class="study-container">
+                    <!-- Study Progress -->
+                    <div class="study-progress">
+                        <div class="progress-info">
+                            <span id="current-card">1</span> из <span id="total-cards">0</span> карточек
+      </div>
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+    </div>
+  </div>
+
+                    <!-- Flashcard -->
+                    <div id="flashcard" class="flashcard">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="card-content">
+                                    <div id="question-text" class="question-text">
+                                        Выберите набор карточек для изучения
+                                    </div>
+                                </div>
+                                <button id="show-answer-btn" class="show-answer-btn">
+                                    Показать ответ
+                                </button>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="card-content">
+                                    <div id="answer-text" class="answer-text">
+                                        <!-- Answer will be shown here -->
+                                    </div>
+                                </div>
+                                <div class="difficulty-buttons">
+                                    <button id="again-btn" class="difficulty-btn again" data-difficulty="again">
+                                        <span class="btn-icon">❌</span>
+                                        <span class="btn-text">Снова</span>
+                                        <span class="btn-interval">&lt;1м</span>
+                                    </button>
+                                    <button id="hard-btn" class="difficulty-btn hard" data-difficulty="hard">
+                                        <span class="btn-icon">😓</span>
+                                        <span class="btn-text">Сложно</span>
+                                        <span class="btn-interval">&lt;6м</span>
+                                    </button>
+                                    <button id="good-btn" class="difficulty-btn good" data-difficulty="good">
+                                        <span class="btn-icon">✅</span>
+                                        <span class="btn-text">Хорошо</span>
+                                        <span class="btn-interval">&lt;10м</span>
+                                    </button>
+                                    <button id="easy-btn" class="difficulty-btn easy" data-difficulty="easy">
+                                        <span class="btn-icon">🎉</span>
+                                        <span class="btn-text">Легко</span>
+                                        <span class="btn-interval">4 дня</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Study Controls -->
+                    <div class="study-controls">
+                        <button id="end-session-btn" class="control-btn secondary">
+                            Завершить сессию
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Statistics View -->
+            <section id="stats-view" class="view">
+                <div class="view-header">
+                    <h2>Статистика изучения</h2>
+                    <p class="view-description">Ваш прогресс и метрики изучения</p>
+                </div>
+                
+                <div class="stats-container">
+                    <div id="stats-content" class="stats-content">
+                        <!-- Statistics will be loaded here -->
+                        <div class="stats-placeholder">
+                            <p>📊 Статистика появится после начала изучения</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings View -->
+            <section id="settings-view" class="view">
+                <div class="view-header">
+                    <h2>Настройки</h2>
+                    <p class="view-description">Персонализация интерфейса и параметров изучения</p>
+                </div>
+                
+                <div class="settings-container">
+                    <div class="settings-group">
+                        <h3>Внешний вид</h3>
+                        <div class="setting-item">
+                            <label for="theme-select">Тема оформления:</label>
+                            <select id="theme-select" class="setting-control">
+                                <option value="light">Светлая</option>
+                                <option value="dark">Темная</option>
+                                <option value="auto">Системная</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h3>Изучение</h3>
+                        <div class="setting-item">
+                            <label for="cards-per-session">Новых карточек за сессию:</label>
+                            <input id="cards-per-session" type="number" min="1" max="100" value="20" class="setting-control">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2024 Anki Flashcards | 
+                    <a href="https://github.com/your-username/anki" target="_blank" rel="noopener">GitHub</a>
+                </p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-content">
+            <div class="loading-spinner large"></div>
+            <p>Загрузка...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/storage.js?v=1.1"></script>
+    <script src="js/spaced-repetition.js?v=1.1"></script>
+    <script src="js/flashcard.js?v=1.1"></script>
+    <script src="js/app.js?v=1.1"></script>
+</body>
+</html>
