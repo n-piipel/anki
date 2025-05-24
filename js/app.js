@@ -661,9 +661,10 @@ class AnkiApp {
         // Update current view
         this.currentView = viewName;
         
-        // Update URL
+        // Update URL - preserve the current pathname (including /panki/ for GitHub Pages)
         if (updateHistory) {
-            const url = viewName === 'home' ? '/' : `/#${viewName}`;
+            const currentPath = window.location.pathname;
+            const url = viewName === 'home' ? currentPath : `${currentPath}#${viewName}`;
             history.pushState({ view: viewName }, '', url);
         }
         
