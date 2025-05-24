@@ -17,6 +17,9 @@ class AnkiApp {
         // Performance optimization: Debounce utility
         this.debounceTimers = new Map();
         
+        // Notification system
+        this.notificationId = 0;
+        
         // Bind methods
         this.switchView = this.switchView.bind(this);
         this.handleNavigation = this.handleNavigation.bind(this);
@@ -121,47 +124,28 @@ class AnkiApp {
      * Show update available notification
      */
     showUpdateAvailable() {
-        // Можно показать уведомление о доступном обновлении
-        const updateBanner = document.createElement('div');
-        updateBanner.className = 'update-banner';
-        updateBanner.innerHTML = `
-            <div class="update-content">
-                <span>🆕 Доступно обновление приложения</span>
-                <button onclick="location.reload()" class="control-btn">Обновить</button>
-                <button onclick="this.parentElement.parentElement.remove()" class="control-btn secondary">Позже</button>
-            </div>
-        `;
+        // Show a persistent notification about the update
+        const updateId = this.showNotification(
+            'A new version of the app is available. Refresh the page to update.',
+            'info',
+            'Update Available 🆕',
+            0 // Persistent notification
+        );
         
-        // Добавляем стили для баннера обновления
-        const style = document.createElement('style');
-        style.textContent = `
-            .update-banner {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                background: var(--primary);
-                color: white;
-                padding: var(--space-sm);
-                z-index: 1001;
-                box-shadow: var(--shadow-md);
+        // Add a refresh button to the notification
+        setTimeout(() => {
+            const notification = document.querySelector(`[data-id="${updateId}"]`);
+            if (notification) {
+                const refreshBtn = document.createElement('button');
+                refreshBtn.className = 'control-btn';
+                refreshBtn.style.cssText = 'margin-top: 8px; padding: 4px 8px; font-size: 0.75rem;';
+                refreshBtn.textContent = 'Refresh Now';
+                refreshBtn.onclick = () => location.reload();
+                
+                const content = notification.querySelector('.notification-content');
+                content.appendChild(refreshBtn);
             }
-            .update-content {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: var(--space-md);
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-            .update-banner .control-btn {
-                padding: var(--space-xs) var(--space-sm);
-                font-size: 0.875rem;
-            }
-        `;
-        
-        document.head.appendChild(style);
-        document.body.appendChild(updateBanner);
+        }, 100);
     }
     
     setupNavigation() {
@@ -213,11 +197,6 @@ class AnkiApp {
             console.log('📚 Loading card sets...');
             const cardSets = await this.flashcardManager.getAvailableCardSets();
             this.renderCardSets(cardSets);
-            
-            // Performance optimization: Start prefetching popular sets in background
-            this.flashcardManager.prefetchPopularSets().catch(error => {
-                console.warn('Prefetch failed:', error);
-            });
         } catch (error) {
             console.error('❌ Failed to load card sets:', error);
             this.showCardSetsError();
@@ -581,16 +560,17 @@ class AnkiApp {
             avgInterval = Math.round((intervals.reduce((a, b) => a + b, 0) / intervals.length) * 100) / 100;
         }
 
-        // Show detailed statistics
-        alert(
-            `Session completed!\n\n` +
-            `Total cards: ${total}\n` +
-            `Correct answers: ${correct}\n` +
-            `Errors: ${wrong}\n` +
-            `Accuracy: ${accuracy}%\n` +
-            `Average interval: ${avgInterval} days\n` +
-            `Time: ${minutes} min`
-        );
+        // Show detailed statistics via notification
+        const message = `
+            Total cards: ${total}<br>
+            Correct answers: ${correct}<br>
+            Errors: ${wrong}<br>
+            Accuracy: ${accuracy}%<br>
+            Average interval: ${avgInterval} days<br>
+            Time: ${minutes} min
+        `;
+        
+        this.showSuccess(message, 'Session Completed! 🎉');
     }
     
     setupKeyboardShortcuts() {
@@ -931,18 +911,18 @@ class AnkiApp {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            alert('✅ Data exported successfully!');
+            this.showSuccess('Data exported successfully!', 'Export Complete');
             
         } catch (error) {
             console.error('Export failed:', error);
-            alert('❌ Error exporting data');
+            this.showError('Error exporting data');
         }
     }
     
     resetStatistics() {
         if (confirm('Are you sure you want to reset all statistics? This action cannot be undone.')) {
             this.storage.clearAllData();
-            alert('✅ Statistics reset');
+            this.showSuccess('Statistics reset successfully', 'Reset Complete');
             this.loadStatistics(); // Reload the stats view
         }
     }
@@ -956,159 +936,6 @@ class AnkiApp {
         document.getElementById('cards-per-session').addEventListener('change', (e) => {
             this.storage.setSetting('cardsPerSession', parseInt(e.target.value));
         });
-        
-        // Performance optimization: Add cache management controls
-        this.setupCacheManagement();
-    }
-    
-    /**
-     * Setup cache management controls in settings
-     */
-    setupCacheManagement() {
-        // Add cache stats and controls if not already added
-        const settingsContainer = document.querySelector('.settings-container');
-        
-        if (!document.getElementById('cache-management')) {
-            const cacheSection = document.createElement('div');
-            cacheSection.className = 'settings-group';
-            cacheSection.id = 'cache-management';
-            
-            const memStats = this.flashcardManager.getMemoryStats();
-            const storageStats = this.storage.getDetailedStorageStats();
-            
-            cacheSection.innerHTML = `
-                <h3>🚀 Performance</h3>
-                
-                <!-- Cache Statistics -->
-                <div class="setting-item">
-                    <label>Cached card sets:</label>
-                    <span id="cache-stats-sets">${memStats.cachedCardSets}</span>
-                </div>
-                <div class="setting-item">
-                    <label>Total cards in cache:</label>
-                    <span id="cache-stats-cards">${memStats.totalCachedCards}</span>
-                </div>
-                
-                <!-- Storage Statistics -->
-                <div class="setting-item">
-                    <label>Storage usage:</label>
-                    <span id="storage-usage">${storageStats.usage.totalKB} KB (${storageStats.usage.usagePercent}%)</span>
-                </div>
-                <div class="setting-item">
-                    <label>Data compression:</label>
-                    <span id="compression-ratio">${storageStats.compression.ratio}% savings</span>
-                </div>
-                
-                <!-- Cache Controls -->
-                <div class="setting-item">
-                    <button class="control-btn secondary" onclick="ankiApp.clearAppCache()">
-                        🧹 Clear Cache
-                    </button>
-                    <button class="control-btn secondary" onclick="ankiApp.updateCacheStats()">
-                        📊 Update Statistics
-                    </button>
-                </div>
-                
-                <!-- Storage Optimization -->
-                <div class="setting-item">
-                    <button class="control-btn secondary" onclick="ankiApp.optimizeStorage()">
-                        🗜️ Optimize Storage
-                    </button>
-                    <button class="control-btn secondary" onclick="ankiApp.cleanupStorage()">
-                        🧹 Clean Old Data
-                    </button>
-                </div>
-                
-                <!-- Prefetch Controls -->
-                <div class="setting-item">
-                    <button class="control-btn secondary" onclick="ankiApp.prefetchAllSets()">
-                        ⚡ Preload All Sets
-                    </button>
-                </div>
-                
-                <!-- Recommendations -->
-                <div class="setting-item" id="storage-recommendations">
-                    <label>Recommendations:</label>
-                    <div class="recommendations">
-                        ${storageStats.recommendations.map(rec => `<div class="recommendation">${rec}</div>`).join('')}
-                    </div>
-                </div>
-            `;
-            
-            settingsContainer.appendChild(cacheSection);
-            
-            // Add CSS for recommendations
-            const style = document.createElement('style');
-            style.textContent = `
-                .recommendations {
-                    margin-top: var(--space-xs);
-                }
-                .recommendation {
-                    padding: var(--space-xs) var(--space-sm);
-                    background: var(--bg-tertiary);
-                    border-radius: var(--radius-sm);
-                    font-size: 0.875rem;
-                    margin-bottom: var(--space-xs);
-                    border-left: 3px solid var(--primary);
-                }
-                .recommendation:last-child {
-                    margin-bottom: 0;
-                }
-            `;
-            document.head.appendChild(style);
-        }
-    }
-    
-    /**
-     * Clear app cache
-     */
-    clearAppCache() {
-        this.flashcardManager.clearCache();
-        this.updateCacheStats();
-        alert('✅ Cache cleared!');
-    }
-    
-    /**
-     * Update cache statistics display
-     */
-    updateCacheStats() {
-        const memStats = this.flashcardManager.getMemoryStats();
-        const storageStats = this.storage.getDetailedStorageStats();
-        
-        const setsEl = document.getElementById('cache-stats-sets');
-        const cardsEl = document.getElementById('cache-stats-cards');
-        const storageEl = document.getElementById('storage-usage');
-        const compressionEl = document.getElementById('compression-ratio');
-        
-        if (setsEl) setsEl.textContent = memStats.cachedCardSets;
-        if (cardsEl) cardsEl.textContent = memStats.totalCachedCards;
-        if (storageEl) storageEl.textContent = `${storageStats.usage.totalKB} KB (${storageStats.usage.usagePercent}%)`;
-        if (compressionEl) compressionEl.textContent = `${storageStats.compression.ratio}% savings`;
-        
-        // Update recommendations
-        const recommendationsEl = document.querySelector('.recommendations');
-        if (recommendationsEl) {
-            recommendationsEl.innerHTML = storageStats.recommendations
-                .map(rec => `<div class="recommendation">${rec}</div>`)
-                .join('');
-        }
-    }
-    
-    /**
-     * Prefetch all available card sets
-     */
-    async prefetchAllSets() {
-        try {
-            this.showLoadingOverlay('Preloading all card sets...');
-            await this.flashcardManager.preloadCardSets();
-            this.updateCacheStats();
-            alert('✅ All card sets preloaded!');
-        } catch (error) {
-            console.error('Prefetch failed:', error);
-            alert('❌ Error preloading');
-        } finally {
-            this.hideLoadingOverlay();
-        }
     }
     
     getViewFromURL() {
@@ -1134,50 +961,117 @@ class AnkiApp {
     }
     
     showError(message) {
-        // Simple error display - could be enhanced with a modal
-        alert(`Error: ${message}`);
+        // Use notification system instead of alert
+        this.showNotification(message, 'error', 'Error');
     }
     
     /**
-     * Optimize storage compression
+     * Notification System
      */
-    async optimizeStorage() {
-        try {
-            this.showLoadingOverlay('Optimizing storage...');
-            
-            const optimized = this.storage.optimizeStorage();
-            this.updateCacheStats();
-            
-            alert(`✅ Storage optimized!\nCompressed items: ${optimized}`);
-        } catch (error) {
-            console.error('Storage optimization failed:', error);
-            alert('❌ Storage optimization error');
-        } finally {
-            this.hideLoadingOverlay();
+    
+    /**
+     * Show a notification
+     * @param {string} message - The message to display
+     * @param {string} type - Type: 'success', 'error', 'warning', 'info'
+     * @param {string} title - Optional title for the notification
+     * @param {number} duration - Duration in milliseconds (0 for persistent)
+     */
+    showNotification(message, type = 'info', title = null, duration = 5000) {
+        const container = document.getElementById('notification-container');
+        if (!container) return;
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.dataset.id = ++this.notificationId;
+        
+        // Get appropriate icon for the type
+        const icons = {
+            success: '✅',
+            error: '❌',
+            warning: '⚠️',
+            info: 'ℹ️'
+        };
+        
+        notification.innerHTML = `
+            <div class="notification-icon">${icons[type] || icons.info}</div>
+            <div class="notification-content">
+                ${title ? `<div class="notification-title">${title}</div>` : ''}
+                <div class="notification-message">${message}</div>
+            </div>
+            <button class="notification-close" onclick="ankiApp.closeNotification(${this.notificationId})">×</button>
+        `;
+        
+        // Add to container
+        container.appendChild(notification);
+        
+        // Trigger animation
+        requestAnimationFrame(() => {
+            notification.classList.add('show');
+        });
+        
+        // Auto-remove after duration (if specified)
+        if (duration > 0) {
+            setTimeout(() => {
+                this.closeNotification(this.notificationId);
+            }, duration);
+        }
+        
+        return this.notificationId;
+    }
+    
+    /**
+     * Close a specific notification
+     * @param {number} id - Notification ID
+     */
+    closeNotification(id) {
+        const notification = document.querySelector(`[data-id="${id}"]`);
+        if (notification) {
+            notification.classList.add('hide');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300); // Match CSS transition duration
         }
     }
     
     /**
-     * Clean up old storage data
+     * Close all notifications
      */
-    async cleanupStorage() {
-        try {
-            this.showLoadingOverlay('Cleaning up old data...');
-            
-            const result = this.storage.cleanupStorage();
-            this.updateCacheStats();
-            
-            if (result.itemsRemoved > 0) {
-                alert(`✅ Cleanup completed!\nItems removed: ${result.itemsRemoved}\nFreed up: ${Math.round(result.bytesFreed / 1024)} KB`);
-            } else {
-                alert('✅ No old data found, storage is clean!');
-            }
-        } catch (error) {
-            console.error('Storage cleanup failed:', error);
-            alert('❌ Storage cleanup error');
-        } finally {
-            this.hideLoadingOverlay();
-        }
+    closeAllNotifications() {
+        const notifications = document.querySelectorAll('.notification');
+        notifications.forEach(notification => {
+            const id = parseInt(notification.dataset.id);
+            this.closeNotification(id);
+        });
+    }
+    
+    /**
+     * Show success notification
+     * @param {string} message - Success message
+     * @param {string} title - Optional title
+     */
+    showSuccess(message, title = null) {
+        return this.showNotification(message, 'success', title);
+    }
+    
+    /**
+     * Show warning notification
+     * @param {string} message - Warning message
+     * @param {string} title - Optional title
+     */
+    showWarning(message, title = null) {
+        return this.showNotification(message, 'warning', title);
+    }
+    
+    /**
+     * Show info notification
+     * @param {string} message - Info message
+     * @param {string} title - Optional title
+     */
+    showInfo(message, title = null) {
+        return this.showNotification(message, 'info', title);
     }
 }
 

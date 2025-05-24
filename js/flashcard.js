@@ -9,15 +9,6 @@ class FlashcardManager {
         this.spacedRepetition = spacedRepetitionManager;
         this.cardSets = new Map();
         this.csvCache = new Map();
-        
-        // Performance optimization: Cache management
-        this.cacheTimestamps = new Map();
-        this.CACHE_TTL = 10 * 60 * 1000; // 10 minutes cache TTL
-        this.MAX_CACHE_SIZE = 50; // Maximum cached card sets
-        
-        // Performance optimization: Prefetch popular sets
-        this.popularSets = new Set(['general-knowledge', 'programming-terms']);
-        this.preloadPromises = new Map();
     }
     
     /**
@@ -235,23 +226,16 @@ class FlashcardManager {
     }
     
     /**
-     * Load cards from a CSV file with improved caching
+     * Load cards from a CSV file with simple caching
      * @param {string} fileName - Name of the CSV file
      * @returns {Array} Array of card objects
      */
     async loadCardsFromFile(fileName) {
         try {
-            // Performance optimization: Check cache with TTL
-            if (this.csvCache.has(fileName) && this.isCacheValid(fileName)) {
+            // Simple cache check
+            if (this.csvCache.has(fileName)) {
                 console.log(`📦 Cache hit: ${fileName}`);
                 return this.csvCache.get(fileName);
-            }
-            
-            // Performance optimization: Check if already loading
-            if (this.preloadPromises.has(fileName.replace('.csv', ''))) {
-                console.log(`⏳ Waiting for prefetch: ${fileName}`);
-                const cards = await this.preloadPromises.get(fileName.replace('.csv', ''));
-                if (cards) return cards;
             }
             
             console.log(`🌐 Loading from network: ${fileName}`);
@@ -264,11 +248,8 @@ class FlashcardManager {
             const csvContent = await response.text();
             const cards = this.parseCSV(csvContent);
             
-            // Performance optimization: Enhanced caching
+            // Simple caching
             this.csvCache.set(fileName, cards);
-            this.updateCacheTimestamp(fileName);
-            this.cleanExpiredCache();
-            this.limitCacheSize();
             
             console.log(`✅ Loaded and cached: ${fileName} (${cards.length} cards)`);
             return cards;
@@ -507,107 +488,14 @@ class FlashcardManager {
     }
     
     /**
-     * Performance optimization: Cache management methods
-     */
-    
-    /**
-     * Check if cached data is still valid
-     * @param {string} key - Cache key
-     * @returns {boolean} True if cache is valid
-     */
-    isCacheValid(key) {
-        const timestamp = this.cacheTimestamps.get(key);
-        if (!timestamp) return false;
-        return (Date.now() - timestamp) < this.CACHE_TTL;
-    }
-    
-    /**
-     * Clean expired cache entries
-     */
-    cleanExpiredCache() {
-        const now = Date.now();
-        for (const [key, timestamp] of this.cacheTimestamps.entries()) {
-            if ((now - timestamp) >= this.CACHE_TTL) {
-                this.csvCache.delete(key);
-                this.cardSets.delete(key);
-                this.cacheTimestamps.delete(key);
-                console.log(`🧹 Cleaned expired cache for: ${key}`);
-            }
-        }
-    }
-    
-    /**
-     * Limit cache size to prevent memory issues
-     */
-    limitCacheSize() {
-        if (this.csvCache.size > this.MAX_CACHE_SIZE) {
-            // Remove oldest entries
-            const entries = Array.from(this.cacheTimestamps.entries())
-                .sort((a, b) => a[1] - b[1]); // Sort by timestamp
-            
-            const toRemove = entries.slice(0, entries.length - this.MAX_CACHE_SIZE);
-            for (const [key] of toRemove) {
-                this.csvCache.delete(key);
-                this.cardSets.delete(key);
-                this.cacheTimestamps.delete(key);
-                console.log(`📦 Removed from cache due to size limit: ${key}`);
-            }
-        }
-    }
-    
-    /**
-     * Update cache timestamp
-     * @param {string} key - Cache key
-     */
-    updateCacheTimestamp(key) {
-        this.cacheTimestamps.set(key, Date.now());
-    }
-    
-    /**
-     * Prefetch popular card sets in background
-     */
-    async prefetchPopularSets() {
-        try {
-            console.log('🚀 Prefetching popular card sets...');
-            const prefetchPromises = [];
-            
-            for (const setId of this.popularSets) {
-                if (!this.csvCache.has(`${setId}.csv`) || !this.isCacheValid(`${setId}.csv`)) {
-                    const promise = this.loadCardsFromFile(`${setId}.csv`)
-                        .then(cards => {
-                            console.log(`✅ Prefetched: ${setId} (${cards.length} cards)`);
-                            return cards;
-                        })
-                        .catch(error => {
-                            console.log(`⚠️ Failed to prefetch ${setId}:`, error.message);
-                        });
-                    prefetchPromises.push(promise);
-                    this.preloadPromises.set(setId, promise);
-                }
-            }
-            
-            if (prefetchPromises.length > 0) {
-                await Promise.allSettled(prefetchPromises);
-                console.log('🎯 Prefetching completed');
-            }
-        } catch (error) {
-            console.warn('Prefetch failed:', error);
-        }
-    }
-    
-    /**
-     * Get memory usage statistics
+     * Get basic memory statistics
      * @returns {Object} Memory usage info
      */
     getMemoryStats() {
         return {
             cachedCardSets: this.cardSets.size,
-            cachedCsvFiles: this.csvCache.size,
             totalCachedCards: Array.from(this.csvCache.values())
-                .reduce((total, cards) => total + cards.length, 0),
-            cacheTimestamps: this.cacheTimestamps.size,
-            oldestCacheEntry: this.cacheTimestamps.size > 0 ? 
-                new Date(Math.min(...this.cacheTimestamps.values())).toLocaleString() : null
+                .reduce((total, cards) => total + cards.length, 0)
         };
     }
 
@@ -617,27 +505,6 @@ class FlashcardManager {
     clearCache() {
         this.cardSets.clear();
         this.csvCache.clear();
-        this.cacheTimestamps.clear();
-        this.preloadPromises.clear();
         console.log('🧹 All cache cleared');
-    }
-    
-    /**
-     * Preload all available card sets for better performance
-     */
-    async preloadCardSets() {
-        try {
-            const cardSets = await this.getAvailableCardSets();
-            const loadPromises = cardSets.map(cardSet => 
-                this.loadCardSet(cardSet.id).catch(error => {
-                    console.warn(`Failed to preload card set ${cardSet.id}:`, error);
-                })
-            );
-            
-            await Promise.all(loadPromises);
-            console.log('Card sets preloaded successfully');
-        } catch (error) {
-            console.warn('Failed to preload card sets:', error);
-        }
     }
 } 
