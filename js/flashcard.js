@@ -15,6 +15,29 @@ class FlashcardManager {
         this.failedAttempts = new Set();
         this.maxRetries = 3;
         this.retryCount = 0;
+        
+        // Detect base path for GitHub Pages
+        this.basePath = this.detectBasePath();
+        console.log(`🔧 Using base path: ${this.basePath}`);
+    }
+    
+    /**
+     * Detect the base path for the application
+     * @returns {string} Base path for data files
+     */
+    detectBasePath() {
+        const path = window.location.pathname;
+        
+        // If we're on GitHub Pages project site (e.g., /anki/), extract the project name
+        if (path.startsWith('/') && path.length > 1) {
+            const pathParts = path.split('/').filter(p => p.length > 0);
+            if (pathParts.length > 0) {
+                return `/${pathParts[0]}/`;
+            }
+        }
+        
+        // Default to root path for local development or user sites
+        return './';
     }
     
     /**
@@ -47,7 +70,8 @@ class FlashcardManager {
                 console.log('📋 Attempting to load index.json...');
                 
                 // Add timestamp to prevent browser caching issues
-                const indexUrl = `data/index.json?t=${now}`;
+                const indexUrl = `${this.basePath}data/index.json?t=${now}`;
+                console.log(`🔗 Full URL: ${indexUrl}`);
                 const indexResponse = await fetch(indexUrl);
                 
                 if (indexResponse.ok) {
@@ -66,7 +90,8 @@ class FlashcardManager {
                             }
                             
                             // Verify the file actually exists
-                            const fileUrl = `data/${cardSetInfo.filename}?t=${now}`;
+                            const fileUrl = `${this.basePath}data/${cardSetInfo.filename}?t=${now}`;
+                            console.log(`🔗 Checking file URL: ${fileUrl}`);
                             const fileResponse = await fetch(fileUrl, { method: 'HEAD' });
                             
                             if (fileResponse.ok) {
@@ -257,7 +282,9 @@ class FlashcardManager {
             }
             
             console.log(`🌐 Loading from network: ${fileName}`);
-            const response = await fetch(`data/${fileName}`);
+            const fileUrl = `${this.basePath}data/${fileName}`;
+            console.log(`🔗 Loading file URL: ${fileUrl}`);
+            const response = await fetch(fileUrl);
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
