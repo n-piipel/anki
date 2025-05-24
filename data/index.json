@@ -1,40 +1,34 @@
 {
   "cardSets": [
     {
-      "id": "general-knowledge",
-      "name": "General Knowledge",
-      "filename": "general-knowledge.csv",
-      "description": "Basic questions on general knowledge"
+      "id": "greek-verbs-basic",
+      "name": "Greek Basic Verbs",
+      "filename": "greek-verbs-basic.csv",
+      "description": "Essential Greek verbs with Russian translations - ask, sing, help, love, walk, and more"
     },
     {
-      "id": "programming-terms",
-      "name": "Programming Terms", 
-      "filename": "programming-terms.csv",
-      "description": "Essential programming terms and concepts"
+      "id": "greek-transport-navigation", 
+      "name": "Greek Transport & Navigation",
+      "filename": "greek-transport-navigation.csv",
+      "description": "Greek phrases for public transport, directions, and city navigation with Russian translations"
     },
     {
-      "id": "languages",
-      "name": "Language Learning",
-      "filename": "languages.csv",
-      "description": "Basic phrases and greetings in different world languages"
+      "id": "greek-verbs-everyday",
+      "name": "Greek Everyday Verbs",
+      "filename": "greek-verbs-everyday.csv",
+      "description": "Common daily action verbs in Greek - read, wait, buy, call, take with Russian translations"
     },
     {
-      "id": "math",
-      "name": "Mathematics",
-      "filename": "math.csv",
-      "description": "Math fundamentals: arithmetic and simple formulas"
+      "id": "greek-connecting-words",
+      "name": "Greek Connecting Words",
+      "filename": "greek-connecting-words.csv",
+      "description": "Greek conjunctions, adverbs, and discourse markers - but, also, therefore, never, always"
     },
     {
-      "id": "general",
-      "name": "General Knowledge (English)",
-      "filename": "general.csv",
-      "description": "Basic facts about the world, history and culture in English"
-    },
-    {
-      "id": "gr-ru-verbs",
-      "name": "Greek Verbs",
-      "filename": "gr-ru-verbs.csv",
-      "description": "Learning Greek verbs with Russian translations"
+      "id": "greek-everyday-life",
+      "name": "Greek Everyday Life",
+      "filename": "greek-everyday-life.csv",
+      "description": "Greek vocabulary for daily life - university, travel, bike, gift, company with Russian translations"
     }
   ]
 } 

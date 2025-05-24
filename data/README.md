@@ -1,62 +1,79 @@
-# 📚 Наборы карточек
+# 📚 Card Sets
 
-Эта папка содержит CSV файлы с наборами карточек для изучения.
+This folder contains CSV files with flashcard sets for learning Greek language.
 
-## 🚀 Как добавить новый набор карточек
+## 🚀 How to Add a New Card Set
 
-### Способ 1: Автоматическое обнаружение (простой)
+### Method 1: Automatic Discovery (Simple)
 
-1. Создайте новый CSV файл в этой папке с любым именем, например: `my-cards.csv`
-2. Используйте формат: `вопрос,ответ` (одна пара на строку)
-3. Обновите страницу - новый набор появится автоматически
+1. Create a new CSV file in this folder with any name, for example: `my-cards.csv`
+2. Use the format: `question,answer` (one pair per line)
+3. Refresh the page - the new set will appear automatically
 
-### Способ 2: Через индексный файл (рекомендуемый)
+### Method 2: Via Index File (Recommended)
 
-1. Создайте CSV файл как в способе 1
-2. Добавьте информацию о наборе в файл `index.json`:
+1. Create a CSV file as in method 1
+2. Add information about the set to the `index.json` file:
 
 ```json
 {
   "cardSets": [
     {
-      "id": "my-cards",
-      "name": "Мои карточки",
-      "filename": "my-cards.csv", 
-      "description": "Описание набора карточек"
+      "id": "my-greek-cards",
+      "name": "My Greek Cards",
+      "filename": "my-greek-cards.csv", 
+      "description": "Custom Greek vocabulary set"
     }
   ]
 }
 ```
 
-## 📝 Формат CSV файлов
+## 📝 CSV File Format
 
 ```csv
-Столица Франции,Париж
-2+2,4
-Как сказать привет по-английски,Hello
-Что такое JavaScript,Язык программирования
+ρωτάω,спрашивать
+τραγουδάω,петь
+βοηθάω,помогать
+αγαπάω,любить
+περπατάω,идти пешком
 ```
 
-### Правила:
-- Одна строка = одна карточка
-- Формат: `вопрос,ответ`
-- Используйте UTF-8 кодировку
-- Избегайте запятых внутри вопросов/ответов или оборачивайте в кавычки
+### Rules:
+- One line = one flashcard
+- Format: `question,answer`
+- Use UTF-8 encoding
+- Avoid commas inside questions/answers or wrap in quotes
 
-## 🔍 Поддерживаемые имена файлов
+## 🇬🇷 Current Greek Language Sets
 
-Приложение автоматически ищет файлы с популярными именами:
-- `general-knowledge.csv` - Общие знания
-- `programming-terms.csv` - Термины программирования  
-- `english-vocabulary.csv` - Английская лексика
-- `history-facts.csv` - Исторические факты
-- `science-basics.csv` - Основы наук
-- И многие другие...
+The application currently includes these Greek language learning sets:
 
-## 📊 Прогресс изучения
+- `greek-verbs-basic.csv` - Essential Greek verbs (ask, sing, help, love, walk)
+- `greek-transport-navigation.csv` - Public transport and city navigation phrases
+- `greek-verbs-everyday.csv` - Common daily action verbs (read, wait, buy, call)
+- `greek-connecting-words.csv` - Conjunctions and discourse markers (but, also, therefore)
+- `greek-everyday-life.csv` - Daily life vocabulary (university, travel, bike, gift)
 
-Прогресс по каждому набору сохраняется в браузере и отображается в интерфейсе:
-- Общее количество карточек
-- Новые карточки (еще не изучавшиеся)
-- Карточки к повторению (по алгоритму интервальных повторений)
-- Процент изученности набора 
+All sets include Greek words/phrases with Russian translations.
+
+## 📊 Learning Progress
+
+Progress for each set is saved in the browser and displayed in the interface:
+- Total number of cards
+- New cards (never studied)
+- Cards for review (based on spaced repetition algorithm)
+- Set completion percentage
+
+## 🎯 Study Tips
+
+- **Regular Practice**: Study a little each day rather than long sessions
+- **Honest Ratings**: Rate your knowledge honestly for optimal scheduling
+- **Context**: Try to use new words in sentences or real situations
+- **Review**: Don't skip review sessions - they're crucial for long-term retention
+
+## 🔧 Technical Notes
+
+- Files are automatically scanned when the app starts
+- Progress data is stored locally in your browser
+- The spaced repetition algorithm (SM-2) optimizes review timing
+- Export your progress from the Statistics page for backup 

@@ -287,7 +287,6 @@ body {
 }
 
 .progress-info {
-    display: block;
     text-align: center;
     font-size: 1.125rem;
     font-weight: 500;
@@ -642,7 +641,7 @@ body {
 }
 
 .progress-info {
-    display: flex;
+    display: block;
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--space-sm);
@@ -659,7 +658,7 @@ body {
 }
 
 .progress-details {
-    display: flex;
+    display: block;
     justify-content: space-between;
     font-size: 0.75rem;
     color: var(--text-muted);
