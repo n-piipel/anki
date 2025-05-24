@@ -4,7 +4,7 @@ A web application for learning with flashcards using the SM-2 spaced repetition 
 
 ## 🌐 Demo
 
-**Live Demo:** [https://n-piipel.github.io/anki/](https://n-piipel.github.io/anki/)
+**Live Demo:** [https://n-piipel.github.io/panki/](https://n-piipel.github.io/panki/)
 
 ## ✨ Features
 

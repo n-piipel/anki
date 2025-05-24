@@ -343,6 +343,7 @@ body {
     justify-content: center;
     padding: var(--space-xl);
     box-shadow: var(--shadow-lg);
+    position: relative;
 }
 
 .flashcard-front {
@@ -358,7 +359,6 @@ body {
 
 .flashcard-back {
     transform: rotateY(180deg);
-    justify-content: space-between;
 }
 
 .card-content {
@@ -368,6 +368,7 @@ body {
     justify-content: center;
     text-align: center;
     position: relative;
+    padding-bottom: 100px; /* Space for buttons on answer side */
 }
 
 .question-text,
@@ -375,6 +376,7 @@ body {
     font-size: 1.5rem;
     line-height: 1.4;
     color: var(--text-primary);
+    font-weight: 500;
 }
 
 .question-text::after {
@@ -398,6 +400,10 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-md);
+    position: absolute;
+    bottom: var(--space-xl);
+    left: var(--space-xl);
+    right: var(--space-xl);
 }
 
 .difficulty-btn {
@@ -406,72 +412,81 @@ body {
     align-items: center;
     justify-content: center;
     gap: var(--space-xs);
-    padding: var(--space-xs);
+    padding: var(--space-md) var(--space-sm);
     border: 2px solid transparent;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     cursor: pointer;
     transition: var(--transition-fast);
     font-weight: 600;
-    height: 58px;
-    min-height: 58px;
+    height: 80px;
+    min-height: 80px;
+    box-shadow: var(--shadow-sm);
 }
 
 .difficulty-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
 }
 
 .difficulty-btn.again {
-    background: #fef2f2;
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
     color: var(--danger);
     border-color: var(--danger);
 }
 
 .difficulty-btn.again:hover {
-    background: #fee2e2;
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    border-color: #dc2626;
 }
 
 .difficulty-btn.hard {
-    background: #fef3c7;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
     color: var(--warning);
     border-color: var(--warning);
 }
 
 .difficulty-btn.hard:hover {
-    background: #fde68a;
+    background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+    border-color: #d97706;
 }
 
 .difficulty-btn.good {
-    background: #f0fdf4;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
     color: var(--success);
     border-color: var(--success);
 }
 
 .difficulty-btn.good:hover {
-    background: #dcfce7;
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    border-color: #16a34a;
 }
 
 .difficulty-btn.easy {
-    background: #eff6ff;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
     color: var(--info);
     border-color: var(--info);
 }
 
 .difficulty-btn.easy:hover {
-    background: #dbeafe;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-color: #0891b2;
 }
 
 .btn-icon {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
+    margin-bottom: var(--space-xs);
 }
 
 .btn-text {
-    font-size: 0.875rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
 }
 
 .btn-interval {
-    font-size: 0.75rem;
-    opacity: 0.8;
+    font-size: 0.8rem;
+    opacity: 0.85;
+    font-weight: 500;
 }
 
 /* Study Controls */
@@ -877,10 +892,22 @@ body {
     }
     
     .difficulty-btn {
-        height: 58px;
-        min-height: 58px;
-        padding: var(--space-xs);
-        font-size: 0.75rem;
+        height: 70px;
+        min-height: 70px;
+        padding: var(--space-sm) var(--space-xs);
+        font-size: 0.8rem;
+    }
+    
+    .btn-icon {
+        font-size: 1.5rem;
+    }
+    
+    .btn-text {
+        font-size: 0.85rem;
+    }
+    
+    .btn-interval {
+        font-size: 0.7rem;
     }
     
     .stats-grid {
@@ -943,10 +970,22 @@ body {
     }
     
     .difficulty-btn {
-        height: 50px;
-        min-height: 50px;
-        padding: var(--space-xs);
+        height: 60px;
+        min-height: 60px;
+        padding: var(--space-sm) var(--space-xs);
         font-size: 0.75rem;
+    }
+    
+    .btn-icon {
+        font-size: 1.25rem;
+    }
+    
+    .btn-text {
+        font-size: 0.75rem;
+    }
+    
+    .btn-interval {
+        font-size: 0.65rem;
     }
 }
 
