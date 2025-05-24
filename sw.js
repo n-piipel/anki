@@ -3,9 +3,9 @@
  * Caches static resources and CSV files
  */
 
-const CACHE_NAME = 'panki-flashcards-v1.9';
-const STATIC_CACHE = 'panki-static-v1.9';
-const DATA_CACHE = 'panki-data-v1.9';
+const CACHE_NAME = 'panki-flashcards-v2.0';
+const STATIC_CACHE = 'panki-static-v2.0';
+const DATA_CACHE = 'panki-data-v2.0';
 
 // Static files for caching
 const STATIC_FILES = [

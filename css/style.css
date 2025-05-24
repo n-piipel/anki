@@ -359,6 +359,11 @@ body {
 
 .flashcard-back {
     transform: rotateY(180deg);
+    padding-bottom: calc(var(--space-xl) + var(--space-lg) + 80px + var(--space-xl) + var(--space-lg));
+}
+
+.flashcard-back .card-content {
+    padding-bottom: 0;
 }
 
 .card-content {
@@ -368,7 +373,6 @@ body {
     justify-content: center;
     text-align: center;
     position: relative;
-    padding-bottom: 100px; /* Space for buttons on answer side */
 }
 
 .question-text,
@@ -401,7 +405,7 @@ body {
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-md);
     position: absolute;
-    bottom: var(--space-xl);
+    bottom: calc(var(--space-xl) + var(--space-lg));
     left: var(--space-xl);
     right: var(--space-xl);
 }
@@ -881,14 +885,19 @@ body {
         padding: var(--space-lg);
     }
     
-    .question-text,
-    .answer-text {
-        font-size: 1.125rem;
+    .flashcard-back {
+        padding-bottom: calc(var(--space-lg) + var(--space-md) + 70px + var(--space-lg) + var(--space-md));
     }
     
     .difficulty-buttons {
-        grid-template-columns: repeat(4, 1fr);
-        gap: var(--space-sm);
+        bottom: calc(var(--space-lg) + var(--space-md));
+        left: var(--space-lg);
+        right: var(--space-lg);
+    }
+    
+    .question-text,
+    .answer-text {
+        font-size: 1.125rem;
     }
     
     .difficulty-btn {
@@ -959,14 +968,21 @@ body {
         padding: var(--space-md);
     }
     
-    .question-text,
-    .answer-text {
-        font-size: 1.125rem;
+    .flashcard-back {
+        padding-bottom: calc(var(--space-md) + var(--space-sm) + 60px + var(--space-md) + var(--space-sm));
     }
     
     .difficulty-buttons {
         grid-template-columns: repeat(2, 1fr);
         gap: var(--space-xs);
+        bottom: calc(var(--space-md) + var(--space-sm));
+        left: var(--space-md);
+        right: var(--space-md);
+    }
+    
+    .question-text,
+    .answer-text {
+        font-size: 1.125rem;
     }
     
     .difficulty-btn {
