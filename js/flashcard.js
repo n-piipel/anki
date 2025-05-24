@@ -19,7 +19,7 @@ class FlashcardManager {
         try {
             console.log('🔍 Getting available card sets...');
             
-            // Method 1: Try to load index.json file first (recommended approach)
+            // Try to load index.json file
             try {
                 console.log('📋 Attempting to load index.json...');
                 const indexResponse = await fetch('data/index.json');
@@ -56,63 +56,12 @@ class FlashcardManager {
                     console.log('📋 index.json not found or not accessible');
                 }
             } catch (error) {
-                console.log('📋 No index.json found, falling back to automatic detection:', error);
+                console.log('📋 Error loading index.json:', error);
             }
             
-            // Method 2: Fallback - try common/popular filenames
-            console.log('🔍 Auto-detecting CSV files in data/ directory...');
-            const potentialFiles = [
-                'general-knowledge.csv',
-                'programming-terms.csv',
-                'english-vocabulary.csv',
-                'history-facts.csv', 
-                'science-basics.csv',
-                'math-basics.csv',
-                'geography.csv',
-                'literature.csv',
-                'philosophy.csv',
-                'biology.csv',
-                'chemistry.csv',
-                'physics.csv',
-                'language-learning.csv',
-                'computer-science.csv',
-                'web-development.csv',
-                'javascript.csv',
-                'python.csv',
-                'react.csv',
-                'spanish.csv',
-                'french.csv',
-                'german.csv',
-                'russian.csv',
-                'chinese.csv',
-                'japanese.csv'
-            ];
-            
-            const availableCardSets = [];
-            
-            // Check which files actually exist
-            for (const fileName of potentialFiles) {
-                try {
-                    const response = await fetch(`data/${fileName}`, { method: 'HEAD' });
-                    if (response.ok) {
-                        console.log(`✅ Found: ${fileName}`);
-                        const cardSetInfo = await this.getCardSetInfo(fileName);
-                        availableCardSets.push(cardSetInfo);
-                    }
-                } catch (error) {
-                    // File doesn't exist, skip it
-                    console.log(`❌ Not found: ${fileName}`);
-                }
-            }
-            
-            // If no predefined sets found, create a demo set
-            if (availableCardSets.length === 0) {
-                console.log('📝 No CSV files found, creating demo set');
-                availableCardSets.push(this.createDemoCardSet());
-            }
-            
-            console.log(`📚 Found ${availableCardSets.length} card sets`);
-            return availableCardSets;
+            // If index.json fails or has no valid card sets, return demo
+            console.log('📝 No valid card sets found, creating demo set');
+            return [this.createDemoCardSet()];
             
         } catch (error) {
             console.error('Error getting available card sets:', error);
