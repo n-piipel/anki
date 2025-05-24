@@ -1,13 +1,13 @@
 /**
- * Service Worker для офлайн работы Anki Flashcards
- * Кэширует статические ресурсы и CSV файлы
+ * Service Worker for Anki Flashcards
+ * Caches static resources and CSV files
  */
 
-const CACHE_NAME = 'anki-flashcards-v1.3';
-const STATIC_CACHE = 'static-v1.3';
-const DATA_CACHE = 'data-v1.3';
+const CACHE_NAME = 'anki-flashcards-v1.4';
+const STATIC_CACHE = 'static-v1.4';
+const DATA_CACHE = 'data-v1.4';
 
-// Статические файлы для кэширования
+// Static files for caching
 const STATIC_FILES = [
     '/',
     '/index.html',
@@ -18,7 +18,7 @@ const STATIC_FILES = [
     '/js/flashcard.js'
 ];
 
-// Файлы данных для кэширования
+// Data files for caching
 const DATA_FILES = [
     '/data/index.json',
     '/data/general-knowledge.csv',
@@ -30,100 +30,93 @@ const DATA_FILES = [
 ];
 
 /**
- * Install event - кэшируем статические файлы
+ * Install event - cache static files
  */
 self.addEventListener('install', event => {
-    console.log('🔧 Service Worker installing...');
+    console.log('🛡️ Service Worker installing...');
     
     event.waitUntil(
         Promise.all([
-            // Кэш статических файлов
+            // Cache static files
             caches.open(STATIC_CACHE).then(cache => {
-                console.log('📦 Caching static files...');
-                return cache.addAll(STATIC_FILES.map(url => new Request(url, {
-                    cache: 'reload' // Принудительно загружаем свежие версии
-                })));
+                console.log('📦 Caching static files');
+                return cache.addAll(STATIC_FILES);
             }),
             
-            // Кэш файлов данных
+            // Cache data files
             caches.open(DATA_CACHE).then(cache => {
-                console.log('📚 Caching data files...');
-                return Promise.allSettled(
-                    DATA_FILES.map(url => 
-                        cache.add(new Request(url, {
-                            cache: 'reload'
-                        })).catch(error => {
-                            console.warn(`⚠️ Failed to cache ${url}:`, error);
-                        })
-                    )
-                );
+                console.log('📊 Caching data files');
+                return cache.addAll(DATA_FILES.map(url => {
+                    return fetch(url).then(response => {
+                        if (response.ok) {
+                            return cache.put(url, response);
+                        }
+                        console.warn(`Failed to cache: ${url}`);
+                    }).catch(error => {
+                        console.warn(`Failed to fetch for cache: ${url}`, error);
+                    });
+                }));
             })
         ]).then(() => {
-            console.log('✅ Service Worker installation complete');
-            // Активируем новый SW немедленно
-            return self.skipWaiting();
+            console.log('✅ Service Worker installed');
+            self.skipWaiting();
         })
     );
 });
 
 /**
- * Activate event - очищаем старые кэши
+ * Activate event - clean old caches
  */
 self.addEventListener('activate', event => {
-    console.log('🚀 Service Worker activating...');
+    console.log('🔄 Service Worker activating...');
     
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
-                    // Удаляем старые версии кэша
+                    // Remove old cache versions
                     if (cacheName !== STATIC_CACHE && 
-                        cacheName !== DATA_CACHE &&
+                        cacheName !== DATA_CACHE && 
                         cacheName !== CACHE_NAME) {
-                        console.log(`🗑️ Deleting old cache: ${cacheName}`);
+                        console.log('🗑️ Deleting old cache:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
             );
         }).then(() => {
             console.log('✅ Service Worker activated');
-            // Начинаем контролировать все вкладки немедленно
             return self.clients.claim();
         })
     );
 });
 
 /**
- * Fetch event - стратегия кэширования
+ * Fetch event - caching strategy
  */
 self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
     
-    // Игнорируем не-GET запросы и внешние домены
-    if (request.method !== 'GET' || !url.origin.includes(self.location.origin)) {
+    // Only handle same-origin requests
+    if (url.origin !== location.origin) {
         return;
     }
     
-    // Стратегия для файлов данных (CSV, JSON)
+    // Different strategies for different types of files
     if (url.pathname.startsWith('/data/')) {
-        event.respondWith(staleWhileRevalidate(request, DATA_CACHE));
-        return;
-    }
-    
-    // Стратегия для статических файлов
-    if (STATIC_FILES.some(file => url.pathname === file || url.pathname.endsWith(file))) {
+        // Data files: Network First strategy
+        event.respondWith(networkFirst(request, DATA_CACHE));
+    } else if (STATIC_FILES.some(file => url.pathname === file || url.pathname.endsWith(file))) {
+        // Static files: Cache First strategy
         event.respondWith(cacheFirst(request, STATIC_CACHE));
-        return;
+    } else {
+        // Other files: Stale While Revalidate strategy
+        event.respondWith(staleWhileRevalidate(request, CACHE_NAME));
     }
-    
-    // Для остальных запросов - стандартная сетевая загрузка
-    event.respondWith(networkFirst(request));
 });
 
 /**
- * Стратегия Cache First - сначала кэш, потом сеть
- * Подходит для статических файлов
+ * Cache First strategy - cache first, then network
  */
 async function cacheFirst(request, cacheName) {
     try {
@@ -131,133 +124,78 @@ async function cacheFirst(request, cacheName) {
         const cachedResponse = await cache.match(request);
         
         if (cachedResponse) {
-            console.log(`📦 Cache hit: ${request.url}`);
             return cachedResponse;
         }
         
-        console.log(`🌐 Cache miss, fetching: ${request.url}`);
         const networkResponse = await fetch(request);
         
-        // Кэшируем успешные ответы
-        if (networkResponse.status === 200) {
-            const responseClone = networkResponse.clone();
-            cache.put(request, responseClone);
+        if (networkResponse.ok) {
+            // Cache successful responses
+            cache.put(request, networkResponse.clone());
         }
         
         return networkResponse;
+        
     } catch (error) {
-        console.error(`❌ Cache first failed for ${request.url}:`, error);
-        // Возвращаем офлайн страницу или базовый ответ
-        return createOfflineResponse(request);
+        console.error('Cache First strategy failed:', error);
+        throw error;
     }
 }
 
 /**
- * Стратегия Network First - сначала сеть, потом кэш
- * Подходит для важных данных
+ * Network First strategy - network first, then cache
  */
-async function networkFirst(request) {
+async function networkFirst(request, cacheName) {
     try {
         const networkResponse = await fetch(request);
-        return networkResponse;
-    } catch (error) {
-        console.log(`🔄 Network failed, trying cache: ${request.url}`);
         
-        const cache = await caches.open(STATIC_CACHE);
+        if (networkResponse.ok) {
+            const cache = await caches.open(cacheName);
+            cache.put(request, networkResponse.clone());
+        }
+        
+        return networkResponse;
+        
+    } catch (error) {
+        console.log('Network failed, trying cache:', error);
+        const cache = await caches.open(cacheName);
         const cachedResponse = await cache.match(request);
         
         if (cachedResponse) {
             return cachedResponse;
         }
         
-        return createOfflineResponse(request);
+        throw error;
     }
 }
 
 /**
- * Стратегия Stale While Revalidate - быстро из кэша + обновление в фоне
- * Подходит для данных, которые могут устареть
+ * Stale While Revalidate strategy - fast from cache + background update
  */
 async function staleWhileRevalidate(request, cacheName) {
     const cache = await caches.open(cacheName);
-    const cachedResponse = await cache.match(request);
     
-    // Запускаем обновление в фоне
-    const fetchPromise = fetch(request).then(networkResponse => {
-        if (networkResponse.status === 200) {
-            cache.put(request, networkResponse.clone());
+    // Start background update
+    const networkResponsePromise = fetch(request).then(response => {
+        if (response.ok) {
+            cache.put(request, response.clone());
         }
-        return networkResponse;
-    }).catch(error => {
-        console.warn(`Background fetch failed for ${request.url}:`, error);
+        return response;
     });
     
-    // Возвращаем кэшированную версию немедленно
+    // Return cached version immediately
+    const cachedResponse = await cache.match(request);
+    
     if (cachedResponse) {
-        console.log(`⚡ Stale cache hit: ${request.url}`);
         return cachedResponse;
     }
     
-    // Если нет кэша, ждём сетевой ответ
-    console.log(`🌐 No cache, waiting for network: ${request.url}`);
-    return fetchPromise;
+    // If no cache, wait for network response
+    return networkResponsePromise;
 }
 
 /**
- * Создать офлайн ответ для недоступных ресурсов
- */
-function createOfflineResponse(request) {
-    const url = new URL(request.url);
-    
-    // Для HTML страниц возвращаем базовую офлайн страницу
-    if (request.headers.get('Accept').includes('text/html')) {
-        return new Response(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Офлайн - Anki Flashcards</title>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-                <style>
-                    body { font-family: sans-serif; text-align: center; padding: 50px; }
-                    .offline { color: #666; }
-                </style>
-            </head>
-            <body>
-                <div class="offline">
-                    <h1>📵 Офлайн режим</h1>
-                    <p>Нет соединения с интернетом</p>
-                    <p>Некоторые функции могут быть недоступны</p>
-                    <button onclick="location.reload()">🔄 Попробовать снова</button>
-                </div>
-            </body>
-            </html>
-        `, {
-            status: 200,
-            headers: { 'Content-Type': 'text/html' }
-        });
-    }
-    
-    // Для API/данных возвращаем JSON ошибку
-    if (url.pathname.includes('/data/')) {
-        return new Response(JSON.stringify({
-            error: 'Офлайн режим',
-            message: 'Данные недоступны без подключения к интернету'
-        }), {
-            status: 503,
-            headers: { 'Content-Type': 'application/json' }
-        });
-    }
-    
-    // Общий офлайн ответ
-    return new Response('Офлайн режим - ресурс недоступен', {
-        status: 503,
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-    });
-}
-
-/**
- * Background sync для отложенных операций
+ * Background sync for delayed operations
  */
 self.addEventListener('sync', event => {
     console.log('🔄 Background sync:', event.tag);
@@ -268,15 +206,15 @@ self.addEventListener('sync', event => {
 });
 
 /**
- * Синхронизация данных изучения
+ * Study data synchronization
  */
 async function syncStudyData() {
     try {
-        // Здесь можно реализовать синхронизацию с сервером
-        // Пока что просто логируем
-        console.log('📊 Syncing study data...');
+        // Here you can implement synchronization with the server
+        // For now, just log it
+        console.log('�� Syncing study data...');
         
-        // В будущем здесь может быть отправка статистики на сервер
+        // In the future, this could be sending statistics to the server
         return Promise.resolve();
     } catch (error) {
         console.error('Sync failed:', error);
@@ -285,7 +223,7 @@ async function syncStudyData() {
 }
 
 /**
- * Push notifications (для будущего использования)
+ * Push notifications (for future use)
  */
 self.addEventListener('push', event => {
     if (!event.data) return;
@@ -293,7 +231,7 @@ self.addEventListener('push', event => {
     const data = event.data.json();
     
     const options = {
-        body: data.body || 'Время для повторения карточек!',
+        body: data.body || 'Time to review cards!',
         icon: '/icon-192.png',
         badge: '/badge-72.png',
         vibrate: [200, 100, 200],
@@ -301,12 +239,12 @@ self.addEventListener('push', event => {
         actions: [
             {
                 action: 'study',
-                title: '📚 Изучать',
+                title: '📚 Study',
                 icon: '/study-icon.png'
             },
             {
                 action: 'later',
-                title: '⏰ Позже',
+                title: '⏰ Later',
                 icon: '/later-icon.png'
             }
         ]
@@ -318,21 +256,21 @@ self.addEventListener('push', event => {
 });
 
 /**
- * Обработка кликов по уведомлениям
+ * Handling push notifications
  */
 self.addEventListener('notificationclick', event => {
     event.notification.close();
     
     if (event.action === 'study') {
-        // Открыть приложение на странице изучения
+        // Open the app on the study page
         event.waitUntil(
             clients.openWindow('/#study')
         );
     } else if (event.action === 'later') {
-        // Просто закрыть уведомление
+        // Simply close the notification
         return;
     } else {
-        // Клик по самому уведомлению - открыть приложение
+        // Click on the notification - open the app
         event.waitUntil(
             clients.openWindow('/')
         );

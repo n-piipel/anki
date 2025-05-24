@@ -1,105 +1,105 @@
-# 🧠 Anki Flashcards - Интервальные повторения
+# 🧠 Anki Flashcards - Spaced Repetition
 
-Веб-приложение для изучения с помощью карточек, использующее алгоритм интервальных повторений SM-2.
+A web application for learning with flashcards using the SM-2 spaced repetition algorithm.
 
-## 🌐 Демо
+## 🌐 Demo
 
-**Живая демонстрация:** [https://n-piipel.github.io/anki/](https://n-piipel.github.io/anki/)
+**Live Demo:** [https://n-piipel.github.io/anki/](https://n-piipel.github.io/anki/)
 
-## 🚀 Особенности
+## ✨ Features
 
-- **Spaced Repetition Algorithm**: Реализация алгоритма SM-2 для оптимального планирования повторений
-- **Локальное хранение**: Весь прогресс сохраняется в браузере пользователя
-- **Статические файлы**: Работает на GitHub Pages без серверной части
-- **CSV поддержка**: Легкое добавление новых наборов карточек через CSV файлы
-- **Адаптивный дизайн**: Поддержка мобильных устройств и планшетов
-- **Темная тема**: Переключение между светлой и темной темами
-- **Клавиатурные shortcuts**: Быстрое управление во время изучения
-- **Статистика**: Детальная аналитика прогресса изучения
+- **Spaced Repetition Algorithm**: Implementation of the SM-2 algorithm for optimal repetition scheduling
+- **Local Storage**: All progress is saved in the user's browser
+- **Static Files**: Works on GitHub Pages without a backend
+- **CSV Support**: Easy addition of new flashcard sets via CSV files
+- **Responsive Design**: Support for mobile devices and tablets
+- **Dark Theme**: Toggle between light and dark themes
+- **Keyboard Shortcuts**: Quick controls during study sessions
+- **Statistics**: Detailed analytics of learning progress
 
-## 🛠 Технологии
+## 🛠 Technologies
 
 - **Frontend**: Vanilla JavaScript (ES6+), HTML5, CSS3
-- **Стили**: CSS Custom Properties, CSS Grid, Flexbox
-- **Локальное хранение**: localStorage API
-- **Алгоритм**: SM-2 Spaced Repetition
-- **Формат данных**: CSV файлы
-- **Хостинг**: GitHub Pages готов
+- **Styles**: CSS Custom Properties, CSS Grid, Flexbox
+- **Local Storage**: localStorage API
+- **Algorithm**: SM-2 Spaced Repetition
+- **Data Format**: CSV files
+- **Hosting**: GitHub Pages ready
 
-## 📚 Как использовать
+## 📚 How to Use
 
-### 1. Изучение карточек
+### 1. Learning Flashcards
 
-1. Откройте приложение
-2. Выберите набор карточек на главной странице
-3. Читайте вопрос и попытайтесь ответить
-4. Нажмите "Показать ответ" или пробел
-5. Оцените сложность:
-   - **Снова** (1) - не помню, повторить через минуту
-   - **Сложно** (2) - помню с трудом, повторить через 6 минут
-   - **Хорошо** (3) - помню хорошо, стандартный интервал
-   - **Легко** (4) - помню отлично, увеличить интервал
+1. Open the application
+2. Select a flashcard set on the main page
+3. Read the question and try to answer
+4. Click "Show Answer" or press Space
+5. Rate the difficulty:
+   - **Again** (1) - I don't remember, repeat in 1 minute
+   - **Hard** (2) - I remember with difficulty, repeat in 6 minutes
+   - **Good** (3) - I remember well, standard interval
+   - **Easy** (4) - I remember perfectly, increase interval
 
-### 2. Клавиатурные shortcuts
+### 2. Keyboard Shortcuts
 
-- `Пробел` или `Enter` - показать ответ
-- `1` - Снова
-- `2` - Сложно
-- `3` - Хорошо
-- `4` - Легко
+- `Space` or `Enter` - show answer
+- `1` - Again
+- `2` - Hard
+- `3` - Good
+- `4` - Easy
 
-### 3. Добавление новых наборов карточек
+### 3. Adding New Flashcard Sets
 
-Создайте CSV файл в папке `data/` в формате:
+Create a CSV file in the `data/` folder in the format:
 
 ```csv
-Вопрос,Ответ
-"Что такое HTML?","HyperText Markup Language"
-"Столица Франции?","Париж"
+Question,Answer
+"What is HTML?","HyperText Markup Language"
+"Capital of France?","Paris"
 ```
 
-#### Поддерживаемые форматы CSV:
+#### Supported CSV Formats:
 
-- **Базовый**: `Вопрос,Ответ`
-- **С дополнительными полями**: `Вопрос,Ответ,Подсказка,Категория,Сложность`
-- **С кавычками**: Используйте кавычки для полей содержащих запятые
-- **Экранирование**: Двойные кавычки внутри поля: `"Он сказал ""Привет"""`
+- **Basic**: `Question,Answer`
+- **With Additional Fields**: `Question,Answer,Hint,Category,Difficulty`
+- **With Quotes**: Use quotes for fields containing commas
+- **Escaping**: Double quotes inside a field: `"He said ""Hello"""`
 
-#### Добавление нового набора:
+#### Adding a New Set:
 
-1. Создайте файл `data/your-set-name.csv`
-2. Добавьте его имя в массив `knownCardSets` в файле `js/flashcard.js`
-3. Закоммитьте изменения в GitHub
+1. Create a file `data/your-set-name.csv`
+2. Add its name to the `knownCardSets` array in the `js/flashcard.js` file
+3. Commit changes to GitHub
 
-## 📊 Алгоритм Spaced Repetition
+## 📊 Spaced Repetition Algorithm
 
-Приложение использует алгоритм SM-2 (SuperMemo 2):
+The application uses the SM-2 (SuperMemo 2) algorithm:
 
-- **Новые карточки**: Начинают с интервала 1-10 минут
-- **Успешные ответы**: Увеличивают интервал
-- **Неуспешные ответы**: Сбрасывают интервал
-- **Ease Factor**: Адаптируется под сложность карточки
-- **Планирование**: Карточки появляются когда наступает срок повторения
+- **New Cards**: Start with intervals 1-10 minutes
+- **Successful Answers**: Increase interval
+- **Failed Answers**: Reset interval
+- **Ease Factor**: Adjusts to card difficulty
+- **Scheduling**: Cards appear when it's time to repeat
 
-### Интервалы по умолчанию:
+### Default Intervals:
 
-- **Снова**: 1 минута
-- **Сложно**: 6 минут
-- **Хорошо**: 10 минут (новые) / стандартный интервал (изученные)
-- **Легко**: 4 дня (новые) / увеличенный интервал (изученные)
+- **Again**: 1 minute
+- **Hard**: 6 minutes
+- **Good**: 10 minutes (new) / standard interval (learned)
+- **Easy**: 4 days (new) / increased interval (learned)
 
-## 🏗 Структура проекта
+## 🏗 Project Structure
 
 ```
 anki/
-├── index.html              # Главная страница SPA
+├── index.html              # Main page SPA
 ├── css/
-│   └── style.css          # Основные стили
+│   └── style.css          # Main styles
 ├── js/
-│   ├── app.js             # Главный контроллер приложения
-│   ├── storage.js         # Управление localStorage
-│   ├── spaced-repetition.js # Алгоритм SM-2
-│   └── flashcard.js       # Управление карточками и CSV
+│   ├── app.js             # Main application controller
+│   ├── storage.js         # LocalStorage management
+│   ├── spaced-repetition.js # SM-2 algorithm
+│   └── flashcard.js       # Flashcard management and CSV
 ├── data/
 │   ├── general-knowledge.csv
 │   └── programming-terms.csv
@@ -108,38 +108,38 @@ anki/
 └── README.md
 ```
 
-## ⚙️ Настройки
+## ⚙️ Settings
 
-### Темы оформления:
-- **Светлая тема**: Классическая светлая палитра
-- **Темная тема**: Темная палитра для комфортного использования
-- **Системная тема**: Автоматическое переключение по системным настройкам
+### Themes:
+- **Light Theme**: Classic light palette
+- **Dark Theme**: Dark palette for comfortable use
+- **System Theme**: Automatic switching based on system settings
 
-### Параметры изучения:
-- **Карточек за сессию**: Количество новых карточек для изучения
-- **Клавиатурные shortcuts**: Включение/отключение быстрых клавиш
+### Learning Parameters:
+- **Cards per Session**: Number of new cards to learn
+- **Keyboard Shortcuts**: Enable/disable quick shortcuts
 
-## 📈 Статистика
+## 📈 Statistics
 
-Приложение отслеживает:
+The application tracks:
 
-- **Общую статистику**: Всего карточек изучено, сессий, времени
-- **Прогресс по наборам**: Статистика для каждого набора карточек
-- **Серии дней**: Количество дней подряд с изучением
-- **Точность ответов**: Процент правильных ответов
-- **Прогноз**: План изучения на ближайшие дни
+- **Overall Statistics**: Total cards learned, sessions, time
+- **Progress by Sets**: Statistics for each flashcard set
+- **Daily Streaks**: Number of consecutive days with study
+- **Answer Accuracy**: Percentage of correct answers
+- **Forecast**: Study plan for upcoming days
 
-## 🔧 Разработка
+## 🔧 Development
 
-### Локальная разработка:
+### Local Development:
 
-1. Склонируйте репозиторий:
+1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/anki.git
+git clone https://github.com/n-piipel/anki.git
 cd anki
 ```
 
-2. Запустите локальный сервер:
+2. Start a local server:
 ```bash
 # Python 3
 python -m http.server 8000
@@ -151,61 +151,61 @@ npx http-server
 php -S localhost:8000
 ```
 
-3. Откройте http://localhost:8000
+3. Open http://localhost:8000
 
-### Развертывание на GitHub Pages:
+### GitHub Pages Deployment:
 
-1. **Форкните или клонируйте этот репозиторий**
-2. **Включите GitHub Pages:**
-   - Зайдите в Settings вашего репозитория
-   - Прокрутите вниз до раздела "Pages"
-   - В разделе "Source" выберите "Deploy from a branch"
-   - Выберите ветку `main` и папку `/ (root)`
-   - Нажмите "Save"
-3. **Дождитесь развертывания** (обычно 1-2 минуты)
-4. **Ваше приложение будет доступно** по адресу: `https://your-username.github.io/anki`
+1. **Fork or clone this repository**
+2. **Enable GitHub Pages:**
+   - Go to Settings in your repository
+   - Scroll down to the "Pages" section
+   - In "Source" select "Deploy from a branch"
+   - Choose branch `main` and folder `/ (root)`
+   - Click "Save"
+3. **Wait for deployment** (usually 1-2 minutes)
+4. **Your app will be available** at: `https://your-username.github.io/anki`
 
-> **Примечание:** Приложение полностью статическое и не требует серверной части. GitHub Pages идеально подходит для хостинга!
+> **Note:** The application is completely static and requires no backend. GitHub Pages is perfect for hosting!
 
-### Обновление контента:
+### Content Updates:
 
-- Любые изменения в ветке `main` автоматически обновят приложение на GitHub Pages
-- Добавляйте новые CSV файлы в папку `data/` и обновляйте `data/index.json`
+- Any changes to the `main` branch will automatically update the app on GitHub Pages
+- Add new CSV files to the `data/` folder and update `data/index.json`
 
-## 🤝 Вклад в проект
+## 🤝 Contributing
 
-Приветствуются любые улучшения! Вы можете:
+All improvements are welcome! You can:
 
-1. **Добавить новые наборы карточек**: Создайте PR с новыми CSV файлами
-2. **Исправить баги**: Опишите проблему в Issues
-3. **Предложить новые функции**: Обсудите идеи в Issues
-4. **Улучшить дизайн**: Предложите улучшения UI/UX
+1. **Add new flashcard sets**: Create a PR with new CSV files
+2. **Fix bugs**: Describe the issue in Issues
+3. **Suggest new features**: Discuss ideas in Issues
+4. **Improve design**: Suggest UI/UX improvements
 
-### Как внести вклад:
+### How to Contribute:
 
-1. Форкните репозиторий
-2. Создайте ветку для новой функции (`git checkout -b feature/amazing-feature`)
-3. Закоммитьте изменения (`git commit -m 'Add amazing feature'`)
-4. Запушьте ветку (`git push origin feature/amazing-feature`)
-5. Создайте Pull Request
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push the branch (`git push origin feature/amazing-feature`)
+5. Create a Pull Request
 
-## 📝 Лицензия
+## 📝 License
 
-Этот проект распространяется под лицензией MIT. Подробности в файле [LICENSE](LICENSE).
+This project is distributed under the MIT License. See [LICENSE](LICENSE) file for details.
 
-## 🙏 Благодарности
+## 🙏 Acknowledgments
 
-- [SuperMemo](https://www.supermemo.com/) за алгоритм SM-2
-- [Anki](https://apps.ankiweb.net/) за вдохновение
-- Всем участникам open-source сообщества
+- [SuperMemo](https://www.supermemo.com/) for the SM-2 algorithm
+- [Anki](https://apps.ankiweb.net/) for inspiration
+- All open-source community contributors
 
-## 📬 Контакты
+## 📬 Contact
 
-Есть вопросы или предложения? Создайте [Issue](https://github.com/your-username/anki/issues) или свяжитесь со мной:
+Have questions or suggestions? Create an [Issue](https://github.com/n-piipel/anki/issues) or contact me:
 
-- GitHub: [@your-username](https://github.com/your-username)
-- Email: your-email@example.com
+- GitHub: [@n-piipel](https://github.com/n-piipel)
+- Email: hcppfl@gmail.com
 
 ---
 
-**Начните изучать эффективно уже сегодня! 🚀** 
+**Start learning effectively today! 🚀** 

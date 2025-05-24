@@ -73,7 +73,7 @@ class AnkiApp {
             
         } catch (error) {
             console.error('❌ Failed to initialize app:', error);
-            this.showError('Ошибка инициализации приложения');
+            this.showError('Failed to initialize application');
         }
     }
     
@@ -230,9 +230,9 @@ class AnkiApp {
         if (cardSets.length === 0) {
             container.innerHTML = `
                 <div class="loading-placeholder">
-                    <p>📝 Наборы карточек не найдены</p>
+                    <p>📝 No card sets found</p>
                     <p style="font-size: 0.875rem; opacity: 0.8;">
-                        Добавьте CSV файлы в папку data/ для начала изучения
+                        Add CSV files to the data/ folder to start studying
                     </p>
                 </div>
             `;
@@ -246,15 +246,15 @@ class AnkiApp {
                 <div class="card-set-stats">
                     <div class="stat-item">
                         <span class="stat-value">${cardSet.totalCards}</span>
-                        <span class="stat-label">Карточек</span>
+                        <span class="stat-label">Cards</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-value">${cardSet.newCards}</span>
-                        <span class="stat-label">Новых</span>
+                        <span class="stat-label">New</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-value">${cardSet.reviewCards}</span>
-                        <span class="stat-label">К повторению</span>
+                        <span class="stat-label">Review</span>
                     </div>
                 </div>
                 <div class="card-set-progress">
@@ -278,9 +278,9 @@ class AnkiApp {
         const container = document.getElementById('card-sets-grid');
         container.innerHTML = `
             <div class="loading-placeholder">
-                <p>⚠️ Ошибка загрузки наборов карточек</p>
+                <p>⚠️ Error loading card sets</p>
                 <button class="control-btn" onclick="window.location.reload()">
-                    Попробовать снова
+                    Try Again
                 </button>
             </div>
         `;
@@ -288,7 +288,7 @@ class AnkiApp {
     
     async selectCardSet(setId) {
         try {
-            this.showLoadingOverlay('Загрузка набора карточек...');
+            this.showLoadingOverlay('Loading card set...');
             
             this.currentCardSet = await this.flashcardManager.loadCardSet(setId);
             
@@ -300,7 +300,7 @@ class AnkiApp {
             
         } catch (error) {
             console.error('❌ Failed to select card set:', error);
-            this.showError('Ошибка загрузки набора карточек');
+            this.showError('Error loading card set');
         } finally {
             this.hideLoadingOverlay();
         }
@@ -342,7 +342,7 @@ class AnkiApp {
             
         } catch (error) {
             console.error('❌ Failed to initialize study session:', error);
-            this.showError('Ошибка инициализации сессии изучения');
+            this.showError('Error initializing study session');
         }
     }
     
@@ -423,15 +423,15 @@ class AnkiApp {
     formatInterval(days) {
         if (days < 1) {
             const minutes = Math.round(days * 24 * 60);
-            return `${minutes}м`;
+            return `${minutes}m`;
         } else if (days < 7) {
-            return `${Math.round(days)}д`;
+            return `${Math.round(days)}d`;
         } else if (days < 30) {
             const weeks = Math.round(days / 7);
-            return `${weeks}н`;
+            return `${weeks}w`;
         } else {
             const months = Math.round(days / 30);
-            return `${months}мес`;
+            return `${months}mo`;
         }
     }
     
@@ -506,9 +506,9 @@ class AnkiApp {
         const questionText = document.getElementById('question-text');
         questionText.innerHTML = `
             <div style="text-align: center;">
-                <h3>🎉 Отличная работа!</h3>
-                <p>Все карточки изучены на сегодня.</p>
-                <p>Возвращайтесь завтра для повторения.</p>
+                <h3>🎉 Great work!</h3>
+                <p>All cards have been studied for today.</p>
+                <p>Come back tomorrow for review.</p>
             </div>
         `;
         
@@ -583,13 +583,13 @@ class AnkiApp {
 
         // Show detailed statistics
         alert(
-            `Сессия завершена!\n\n` +
-            `Всего карточек: ${total}\n` +
-            `Правильных ответов: ${correct}\n` +
-            `Ошибок: ${wrong}\n` +
-            `Точность: ${accuracy}%\n` +
-            `Средний интервал: ${avgInterval} дней\n` +
-            `Время: ${minutes} мин`
+            `Session completed!\n\n` +
+            `Total cards: ${total}\n` +
+            `Correct answers: ${correct}\n` +
+            `Errors: ${wrong}\n` +
+            `Accuracy: ${accuracy}%\n` +
+            `Average interval: ${avgInterval} days\n` +
+            `Time: ${minutes} min`
         );
     }
     
@@ -687,7 +687,7 @@ class AnkiApp {
             statsContainer.innerHTML = `
                 <div class="loading-placeholder">
                     <div class="loading-spinner large"></div>
-                    <p>Загрузка статистики...</p>
+                    <p>Loading statistics...</p>
                 </div>
             `;
             
@@ -720,22 +720,22 @@ class AnkiApp {
             await renderChunk(`
                 <div class="stats-grid">
                     <div class="stats-card">
-                        <h3>📊 Общая статистика</h3>
+                        <h3>📊 General Statistics</h3>
                         <div class="stats-list">
                             <div class="stat-row">
-                                <span class="stat-label">Всего карточек изучено:</span>
+                                <span class="stat-label">Total cards studied:</span>
                                 <span class="stat-value">${globalStats.totalCardsStudied || 0}</span>
                             </div>
                             <div class="stat-row">
-                                <span class="stat-label">Сессий завершено:</span>
+                                <span class="stat-label">Sessions completed:</span>
                                 <span class="stat-value">${globalStats.totalSessions || 0}</span>
                             </div>
                             <div class="stat-row">
-                                <span class="stat-label">Время изучения:</span>
-                                <span class="stat-value">${hoursSpent}ч ${minutesSpent}м</span>
+                                <span class="stat-label">Study time:</span>
+                                <span class="stat-value">${hoursSpent}h ${minutesSpent}m</span>
                             </div>
                             <div class="stat-row">
-                                <span class="stat-label">Средняя точность:</span>
+                                <span class="stat-label">Average accuracy:</span>
                                 <span class="stat-value">${avgAccuracy}%</span>
                             </div>
                         </div>
@@ -745,14 +745,14 @@ class AnkiApp {
             // Chunk 2: Streak info
             await renderChunk(`
                     <div class="stats-card">
-                        <h3>🔥 Серия дней</h3>
+                        <h3>🔥 Daily Streak</h3>
                         <div class="streak-display">
                             <div class="streak-number">${streak}</div>
-                            <div class="streak-label">${streak === 1 ? 'день' : streak < 5 ? 'дня' : 'дней'} подряд</div>
+                            <div class="streak-label">${streak === 1 ? 'day' : 'days'} in a row</div>
                             <div class="streak-info">
                                 ${globalStats.lastStudyDate === today ? 
-                                    '✅ Сегодня уже изучали' : 
-                                    '💪 Продолжайте изучение!'}
+                                    '✅ Already studied today' : 
+                                    '💪 Keep studying!'}
                             </div>
                         </div>
                     </div>
@@ -761,12 +761,12 @@ class AnkiApp {
             // Chunk 3: Activity chart
             await renderChunk(`
                     <div class="stats-card">
-                        <h3>📈 Активность (7 дней)</h3>
+                        <h3>📈 Activity (7 days)</h3>
                         <div class="activity-chart">
                             ${this.renderActivityChart(recentActivity)}
                         </div>
                         <div class="activity-summary">
-                            Карточек за неделю: <strong>${recentActivity.reduce((sum, day) => sum + day.cards, 0)}</strong>
+                            Cards this week: <strong>${recentActivity.reduce((sum, day) => sum + day.cards, 0)}</strong>
                         </div>
                     </div>
             `);
@@ -775,7 +775,7 @@ class AnkiApp {
             const cardSetsProgressHtml = await this.renderCardSetsProgress();
             await renderChunk(`
                     <div class="stats-card">
-                        <h3>📚 Прогресс по наборам</h3>
+                        <h3>📚 Progress by Sets</h3>
                         <div id="card-sets-progress">
                             ${cardSetsProgressHtml}
                         </div>
@@ -787,10 +787,10 @@ class AnkiApp {
             await renderChunk(`
                 <div class="stats-actions">
                     <button class="control-btn secondary" onclick="ankiApp.exportStatistics()">
-                        📤 Экспорт данных
+                        📤 Export Data
                     </button>
                     <button class="control-btn secondary" onclick="ankiApp.resetStatistics()">
-                        🗑️ Сбросить статистику
+                        🗑️ Reset Statistics
                     </button>
                 </div>
             `);
@@ -804,8 +804,8 @@ class AnkiApp {
             console.error('❌ Failed to load statistics:', error);
             document.getElementById('stats-content').innerHTML = `
                 <div class="stats-placeholder">
-                    <p>⚠️ Ошибка загрузки статистики</p>
-                    <button class="control-btn" onclick="ankiApp.loadStatistics()">Попробовать снова</button>
+                    <p>⚠️ Error loading statistics</p>
+                    <button class="control-btn" onclick="ankiApp.loadStatistics()">Try Again</button>
                 </div>
             `;
         }
@@ -862,7 +862,7 @@ class AnkiApp {
             const height = maxCards > 0 ? (day.cards / maxCards) * 100 : 0;
             return `
                 <div class="activity-day">
-                    <div class="activity-bar" style="height: ${height}%" title="${day.cards} карточек"></div>
+                    <div class="activity-bar" style="height: ${height}%" title="${day.cards} cards"></div>
                     <div class="activity-label">${day.dayName}</div>
                 </div>
             `;
@@ -874,7 +874,7 @@ class AnkiApp {
             const cardSets = await this.flashcardManager.getAvailableCardSets();
             
             if (cardSets.length === 0) {
-                return '<p class="no-progress">Нет данных по наборам карточек</p>';
+                return '<p class="no-progress">No card sets data available</p>';
             }
             
             return cardSets.map(cardSet => {
@@ -892,8 +892,8 @@ class AnkiApp {
                             <div class="progress-fill" style="width: ${progressPercent}%"></div>
                         </div>
                         <div class="progress-details">
-                            <span>Изучено: ${progress.totalCards}/${cardSet.totalCards}</span>
-                            <span>К повторению: ${progress.reviewCards}</span>
+                            <span>Studied: ${progress.totalCards}/${cardSet.totalCards}</span>
+                            <span>Review: ${progress.reviewCards}</span>
                         </div>
                     </div>
                 `;
@@ -901,7 +901,7 @@ class AnkiApp {
             
         } catch (error) {
             console.error('Error rendering card sets progress:', error);
-            return '<p class="no-progress">Ошибка загрузки прогресса</p>';
+            return '<p class="no-progress">Error loading progress</p>';
         }
     }
     
@@ -931,18 +931,18 @@ class AnkiApp {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            alert('✅ Данные экспортированы успешно!');
+            alert('✅ Data exported successfully!');
             
         } catch (error) {
             console.error('Export failed:', error);
-            alert('❌ Ошибка экспорта данных');
+            alert('❌ Error exporting data');
         }
     }
     
     resetStatistics() {
-        if (confirm('Вы уверены, что хотите сбросить всю статистику? Это действие нельзя отменить.')) {
+        if (confirm('Are you sure you want to reset all statistics? This action cannot be undone.')) {
             this.storage.clearAllData();
-            alert('✅ Статистика сброшена');
+            alert('✅ Statistics reset');
             this.loadStatistics(); // Reload the stats view
         }
     }
@@ -977,58 +977,58 @@ class AnkiApp {
             const storageStats = this.storage.getDetailedStorageStats();
             
             cacheSection.innerHTML = `
-                <h3>🚀 Производительность</h3>
+                <h3>🚀 Performance</h3>
                 
                 <!-- Cache Statistics -->
                 <div class="setting-item">
-                    <label>Кэшировано наборов:</label>
+                    <label>Cached card sets:</label>
                     <span id="cache-stats-sets">${memStats.cachedCardSets}</span>
                 </div>
                 <div class="setting-item">
-                    <label>Всего карточек в кэше:</label>
+                    <label>Total cards in cache:</label>
                     <span id="cache-stats-cards">${memStats.totalCachedCards}</span>
                 </div>
                 
                 <!-- Storage Statistics -->
                 <div class="setting-item">
-                    <label>Использование хранилища:</label>
+                    <label>Storage usage:</label>
                     <span id="storage-usage">${storageStats.usage.totalKB} KB (${storageStats.usage.usagePercent}%)</span>
                 </div>
                 <div class="setting-item">
-                    <label>Сжатие данных:</label>
-                    <span id="compression-ratio">${storageStats.compression.ratio}% экономии</span>
+                    <label>Data compression:</label>
+                    <span id="compression-ratio">${storageStats.compression.ratio}% savings</span>
                 </div>
                 
                 <!-- Cache Controls -->
                 <div class="setting-item">
                     <button class="control-btn secondary" onclick="ankiApp.clearAppCache()">
-                        🧹 Очистить кэш
+                        🧹 Clear Cache
                     </button>
                     <button class="control-btn secondary" onclick="ankiApp.updateCacheStats()">
-                        📊 Обновить статистику
+                        📊 Update Statistics
                     </button>
                 </div>
                 
                 <!-- Storage Optimization -->
                 <div class="setting-item">
                     <button class="control-btn secondary" onclick="ankiApp.optimizeStorage()">
-                        🗜️ Оптимизировать хранилище
+                        🗜️ Optimize Storage
                     </button>
                     <button class="control-btn secondary" onclick="ankiApp.cleanupStorage()">
-                        🧹 Очистить старые данные
+                        🧹 Clean Old Data
                     </button>
                 </div>
                 
                 <!-- Prefetch Controls -->
                 <div class="setting-item">
                     <button class="control-btn secondary" onclick="ankiApp.prefetchAllSets()">
-                        ⚡ Предзагрузить все наборы
+                        ⚡ Preload All Sets
                     </button>
                 </div>
                 
                 <!-- Recommendations -->
                 <div class="setting-item" id="storage-recommendations">
-                    <label>Рекомендации:</label>
+                    <label>Recommendations:</label>
                     <div class="recommendations">
                         ${storageStats.recommendations.map(rec => `<div class="recommendation">${rec}</div>`).join('')}
                     </div>
@@ -1065,7 +1065,7 @@ class AnkiApp {
     clearAppCache() {
         this.flashcardManager.clearCache();
         this.updateCacheStats();
-        alert('✅ Кэш очищен!');
+        alert('✅ Cache cleared!');
     }
     
     /**
@@ -1083,7 +1083,7 @@ class AnkiApp {
         if (setsEl) setsEl.textContent = memStats.cachedCardSets;
         if (cardsEl) cardsEl.textContent = memStats.totalCachedCards;
         if (storageEl) storageEl.textContent = `${storageStats.usage.totalKB} KB (${storageStats.usage.usagePercent}%)`;
-        if (compressionEl) compressionEl.textContent = `${storageStats.compression.ratio}% экономии`;
+        if (compressionEl) compressionEl.textContent = `${storageStats.compression.ratio}% savings`;
         
         // Update recommendations
         const recommendationsEl = document.querySelector('.recommendations');
@@ -1099,13 +1099,13 @@ class AnkiApp {
      */
     async prefetchAllSets() {
         try {
-            this.showLoadingOverlay('Предзагрузка всех наборов...');
+            this.showLoadingOverlay('Preloading all card sets...');
             await this.flashcardManager.preloadCardSets();
             this.updateCacheStats();
-            alert('✅ Все наборы предзагружены!');
+            alert('✅ All card sets preloaded!');
         } catch (error) {
             console.error('Prefetch failed:', error);
-            alert('❌ Ошибка предзагрузки');
+            alert('❌ Error preloading');
         } finally {
             this.hideLoadingOverlay();
         }
@@ -1121,7 +1121,7 @@ class AnkiApp {
         this.switchView(view, false);
     }
     
-    showLoadingOverlay(message = 'Загрузка...') {
+    showLoadingOverlay(message = 'Loading...') {
         const overlay = document.getElementById('loading-overlay');
         const text = overlay.querySelector('p');
         text.textContent = message;
@@ -1135,7 +1135,7 @@ class AnkiApp {
     
     showError(message) {
         // Simple error display - could be enhanced with a modal
-        alert(`Ошибка: ${message}`);
+        alert(`Error: ${message}`);
     }
     
     /**
@@ -1143,15 +1143,15 @@ class AnkiApp {
      */
     async optimizeStorage() {
         try {
-            this.showLoadingOverlay('Оптимизация хранилища...');
+            this.showLoadingOverlay('Optimizing storage...');
             
             const optimized = this.storage.optimizeStorage();
             this.updateCacheStats();
             
-            alert(`✅ Хранилище оптимизировано!\nСжато элементов: ${optimized}`);
+            alert(`✅ Storage optimized!\nCompressed items: ${optimized}`);
         } catch (error) {
             console.error('Storage optimization failed:', error);
-            alert('❌ Ошибка оптимизации хранилища');
+            alert('❌ Storage optimization error');
         } finally {
             this.hideLoadingOverlay();
         }
@@ -1162,19 +1162,19 @@ class AnkiApp {
      */
     async cleanupStorage() {
         try {
-            this.showLoadingOverlay('Очистка старых данных...');
+            this.showLoadingOverlay('Cleaning up old data...');
             
             const result = this.storage.cleanupStorage();
             this.updateCacheStats();
             
             if (result.itemsRemoved > 0) {
-                alert(`✅ Очистка завершена!\nУдалено элементов: ${result.itemsRemoved}\nОсвобождено: ${Math.round(result.bytesFreed / 1024)} KB`);
+                alert(`✅ Cleanup completed!\nItems removed: ${result.itemsRemoved}\nFreed up: ${Math.round(result.bytesFreed / 1024)} KB`);
             } else {
-                alert('✅ Старые данные не найдены, хранилище чистое!');
+                alert('✅ No old data found, storage is clean!');
             }
         } catch (error) {
             console.error('Storage cleanup failed:', error);
-            alert('❌ Ошибка очистки хранилища');
+            alert('❌ Storage cleanup error');
         } finally {
             this.hideLoadingOverlay();
         }

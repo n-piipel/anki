@@ -187,7 +187,7 @@ class FlashcardManager {
     createDemoCardSet() {
         return {
             id: 'demo',
-            name: 'Демонстрационные карточки',
+            name: 'Demo Flashcards',
             fileName: null,
             totalCards: 5,
             newCards: 5,
@@ -230,7 +230,7 @@ class FlashcardManager {
             
         } catch (error) {
             console.error(`Error loading card set ${cardSetId}:`, error);
-            throw new Error(`Не удалось загрузить набор карточек: ${cardSetId}`);
+            throw new Error(`Failed to load card set: ${cardSetId}`);
         }
     }
     
@@ -364,34 +364,34 @@ class FlashcardManager {
         const cards = [
             {
                 id: 'demo-1',
-                question: 'Что такое spaced repetition?',
-                answer: 'Метод изучения, основанный на повторении материала через увеличивающиеся интервалы времени для улучшения долговременной памяти.'
+                question: 'What is spaced repetition?',
+                answer: 'A learning method based on repeating material at increasing intervals to improve long-term memory.'
             },
             {
                 id: 'demo-2', 
-                question: 'Какая столица Франции?',
-                answer: 'Париж'
+                question: 'What is the capital of France?',
+                answer: 'Paris'
             },
             {
                 id: 'demo-3',
-                question: 'Сколько планет в Солнечной системе?',
-                answer: '8 планет (Меркурий, Венера, Земля, Марс, Юпитер, Сатурн, Уран, Нептун)'
+                question: 'How many planets are in the Solar System?',
+                answer: '8 planets (Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune)'
             },
             {
                 id: 'demo-4',
-                question: 'Что означает HTML?',
-                answer: 'HyperText Markup Language - язык разметки гипертекста'
+                question: 'What does HTML stand for?',
+                answer: 'HyperText Markup Language'
             },
             {
                 id: 'demo-5',
-                question: 'В каком году была основана компания Google?',
-                answer: '1998 год'
+                question: 'In what year was Google founded?',
+                answer: '1998'
             }
         ];
         
         return {
             id: 'demo',
-            name: 'Демонстрационные карточки',
+            name: 'Demo Flashcards',
             fileName: null,
             totalCards: cards.length,
             newCards: cards.length,

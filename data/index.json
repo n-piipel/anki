@@ -2,39 +2,39 @@
   "cardSets": [
     {
       "id": "general-knowledge",
-      "name": "Общие знания",
+      "name": "General Knowledge",
       "filename": "general-knowledge.csv",
-      "description": "Базовые вопросы по общим знаниям"
+      "description": "Basic questions on general knowledge"
     },
     {
       "id": "programming-terms",
-      "name": "Термины программирования", 
+      "name": "Programming Terms", 
       "filename": "programming-terms.csv",
-      "description": "Основные термины и концепции программирования"
+      "description": "Essential programming terms and concepts"
     },
     {
       "id": "languages",
-      "name": "Изучение языков",
+      "name": "Language Learning",
       "filename": "languages.csv",
-      "description": "Базовые фразы и приветствия на разных языках мира"
+      "description": "Basic phrases and greetings in different world languages"
     },
     {
       "id": "math",
-      "name": "Математика",
+      "name": "Mathematics",
       "filename": "math.csv",
-      "description": "Основы математики: арифметика и простые формулы"
+      "description": "Math fundamentals: arithmetic and simple formulas"
     },
     {
       "id": "general",
-      "name": "Общие знания (English)",
+      "name": "General Knowledge (English)",
       "filename": "general.csv",
-      "description": "Базовые факты о мире, истории и культуре на английском языке"
+      "description": "Basic facts about the world, history and culture in English"
     },
     {
       "id": "gr-ru-verbs",
-      "name": "Греческие глаголы",
+      "name": "Greek Verbs",
       "filename": "gr-ru-verbs.csv",
-      "description": "Изучение греческих глаголов с переводом на русский язык"
+      "description": "Learning Greek verbs with Russian translations"
     }
   ]
 } 

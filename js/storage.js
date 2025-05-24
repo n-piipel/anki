@@ -593,19 +593,19 @@ class StorageManager {
         const recommendations = [];
         
         if (usagePercent > 80) {
-            recommendations.push('⚠️ Высокое использование хранилища - рекомендуется очистка');
+            recommendations.push('⚠️ High storage usage - cleanup recommended');
         }
         
         if (sizeInfo.compressionRatio < 10) {
-            recommendations.push('📦 Можно улучшить сжатие данных');
+            recommendations.push('📦 Data compression can be improved');
         }
         
         if (Object.keys(sizeInfo.items).length > 50) {
-            recommendations.push('🧹 Много элементов - рекомендуется очистка старых данных');
+            recommendations.push('🧹 Many items - recommend cleaning old data');
         }
         
         if (recommendations.length === 0) {
-            recommendations.push('✅ Хранилище оптимизировано');
+            recommendations.push('✅ Storage is optimized');
         }
         
         return recommendations;
