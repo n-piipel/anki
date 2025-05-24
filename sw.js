@@ -190,6 +190,11 @@ async function networkFirst(request, cacheName) {
 async function staleWhileRevalidate(request, cacheName) {
     const cache = await caches.open(cacheName);
     
+    // Don't cache HEAD requests
+    if (request.method === 'HEAD') {
+        return fetch(request);
+    }
+    
     // Start background update
     const networkResponsePromise = fetch(request).then(response => {
         if (response.ok) {
