@@ -1,4 +1,4 @@
-/* pAnki Flashcards CSS - Version 1.9 - Fixed text centering and button spacing */
+/* pAnki Flashcards CSS - Version 2.0 - Fixed absolute positioning and text centering */
 /* Reset and Base Styles */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -338,9 +338,6 @@ body {
     border-radius: var(--radius-xl);
     background: var(--bg-secondary);
     border: 1px solid var(--border-primary);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     padding: var(--space-xl);
     box-shadow: var(--shadow-lg);
     position: relative;
@@ -363,14 +360,15 @@ body {
 
 .card-content {
     position: absolute;
-    top: var(--space-xl);
-    left: var(--space-xl);
-    right: var(--space-xl);
+    top: 0;
+    left: 0;
+    right: 0;
     bottom: 140px; /* Fixed space for buttons */
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
+    padding: var(--space-xl);
 }
 
 .question-text,
