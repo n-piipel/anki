@@ -6,11 +6,25 @@ yarn-debug.log*
 yarn-error.log*
 dev-debug.log
 
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
 # Dependency directories
 node_modules/
+jspm_packages/
+
+# Yarn Integrity file
+.yarn-integrity
 
 # Environment variables
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Editor directories and files
 .idea
@@ -23,9 +37,19 @@ node_modules/
 
 # OS specific
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Task Master configuration (keep tasks structure but exclude config)
 .taskmasterconfig
+
+# Development/Project Management files (not needed in public repo)
+tasks/
+scripts/
 
 # Development files (keep for documentation)
 # tasks/ - commented out to include tasks for docs
@@ -41,4 +65,50 @@ node_modules/
 _site/
 .sass-cache/
 .jekyll-cache/
-.jekyll-metadata 
+.jekyll-metadata
+
+# Build outputs
+dist/
+build/
+out/
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Local development server files
+*.local 
