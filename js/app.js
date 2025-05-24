@@ -17,6 +17,9 @@ class AnkiApp {
         // Performance optimization: Debounce utility
         this.debounceTimers = new Map();
         
+        // Rate limiting for stats loading
+        this.lastStatsLoad = 0;
+        
         // Notification system
         this.notificationId = 0;
         
@@ -81,42 +84,50 @@ class AnkiApp {
     }
     
     /**
-     * Performance optimization: Register Service Worker for offline functionality
+     * Register service worker for offline functionality
      */
     async registerServiceWorker() {
-        if ('serviceWorker' in navigator) {
-            try {
-                console.log('🛡️ Registering Service Worker...');
-                const registration = await navigator.serviceWorker.register('/sw.js');
+        console.log('🛡️ Registering Service Worker...');
+        
+        // Check if service workers are supported
+        if (!('serviceWorker' in navigator)) {
+            console.warn('⚠️ Service Worker not supported in this browser');
+            return;
+        }
+
+        try {
+            // For GitHub Pages, use relative path
+            const swUrl = './sw.js';
+            console.log('🔧 Registering Service Worker from:', swUrl);
+            
+            const registration = await navigator.serviceWorker.register(swUrl, {
+                scope: './' // Use relative scope for GitHub Pages
+            });
+            
+            console.log('✅ Service Worker registered successfully', registration);
+
+            // Listen for updates
+            registration.addEventListener('updatefound', () => {
+                console.log('🔄 Service Worker update found');
+                const newWorker = registration.installing;
                 
-                registration.addEventListener('updatefound', () => {
-                    console.log('🔄 Service Worker update found');
-                    const newWorker = registration.installing;
-                    
+                if (newWorker) {
                     newWorker.addEventListener('statechange', () => {
-                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            // Новая версия доступна
-                            console.log('🆕 New version available');
-                            this.showUpdateAvailable();
+                        if (newWorker.state === 'installed') {
+                            if (navigator.serviceWorker.controller) {
+                                console.log('🔄 New content available, reload to update');
+                            } else {
+                                console.log('✅ Content cached for offline use');
+                            }
                         }
                     });
-                });
-                
-                // Обработка сообщений от Service Worker
-                navigator.serviceWorker.addEventListener('message', event => {
-                    if (event.data.type === 'CACHE_UPDATED') {
-                        console.log('📦 Cache updated:', event.data.payload);
-                    }
-                });
-                
-                console.log('✅ Service Worker registered successfully');
-                return registration;
-                
-            } catch (error) {
-                console.warn('⚠️ Service Worker registration failed:', error);
-            }
-        } else {
-            console.log('ℹ️ Service Worker not supported');
+                }
+            });
+
+        } catch (error) {
+            console.warn('⚠️ Service Worker registration failed:', error);
+            console.log('📱 App will continue without offline functionality');
+            // Don't throw error - app should work without service worker
         }
     }
     
@@ -671,33 +682,25 @@ class AnkiApp {
         }
     }
     
+    /**
+     * Load and display statistics view with rate limiting
+     */
     async loadStatistics() {
+        // Rate limiting to prevent infinite loops
+        const now = Date.now();
+        if (this.lastStatsLoad && (now - this.lastStatsLoad) < 2000) {
+            console.warn('⚠️ Stats loading rate limited - too many requests');
+            return;
+        }
+        this.lastStatsLoad = now;
+
         try {
-            // Performance optimization: Show loading immediately
+            console.log('📊 Loading statistics...');
+            
             const statsContainer = document.getElementById('stats-content');
-            statsContainer.innerHTML = `
-                <div class="loading-placeholder">
-                    <div class="loading-spinner large"></div>
-                    <p>Loading statistics...</p>
-                </div>
-            `;
-            
-            // Get global statistics
-            const globalStats = this.storage.getStats();
-            
-            // Performance optimization: Batch DOM updates
-            const fragment = document.createDocumentFragment();
             const tempContainer = document.createElement('div');
             
-            // Calculate all data first (sync operations)
-            const today = new Date().toISOString().split('T')[0];
-            const streak = this.calculateStreak(globalStats, today);
-            const recentActivity = this.getRecentActivity(globalStats, 7);
-            const hoursSpent = Math.round((globalStats.totalTimeSpent || 0) / 3600 * 10) / 10;
-            const minutesSpent = Math.round(((globalStats.totalTimeSpent || 0) % 3600) / 60);
-            const avgAccuracy = this.calculateAverageAccuracy(globalStats);
-            
-            // Render in chunks to avoid blocking
+            // Chunked rendering for better UX
             const renderChunk = async (htmlChunk) => {
                 return new Promise(resolve => {
                     requestAnimationFrame(() => {
@@ -707,43 +710,54 @@ class AnkiApp {
                 });
             };
             
-            // Chunk 1: General stats
+            // Chunk 1: Statistics overview
+            const globalStats = this.storage.getStats();
+            const today = new Date().toISOString().split('T')[0];
+            const streak = this.calculateStreak(globalStats, today);
+            const recentActivity = this.getRecentActivity(globalStats, 7);
+            const averageAccuracy = this.calculateAverageAccuracy(globalStats);
+            
             await renderChunk(`
-                <div class="stats-grid">
+                <div class="stats-overview">
                     <div class="stats-card">
-                        <h3>📊 General Statistics</h3>
-                        <div class="stats-list">
-                            <div class="stat-row">
-                                <span class="stat-label">Total cards studied:</span>
-                                <span class="stat-value">${globalStats.totalCardsStudied || 0}</span>
+                        <h3>📊 Overview</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">${globalStats.totalCardsStudied || 0}</div>
+                                <div class="stat-label">Total Cards</div>
                             </div>
-                            <div class="stat-row">
-                                <span class="stat-label">Sessions completed:</span>
-                                <span class="stat-value">${globalStats.totalSessions || 0}</span>
+                            <div class="stat-item">
+                                <div class="stat-value">${streak}</div>
+                                <div class="stat-label">Day Streak</div>
                             </div>
-                            <div class="stat-row">
-                                <span class="stat-label">Study time:</span>
-                                <span class="stat-value">${hoursSpent}h ${minutesSpent}m</span>
+                            <div class="stat-item">
+                                <div class="stat-value">${averageAccuracy}%</div>
+                                <div class="stat-label">Accuracy</div>
                             </div>
-                            <div class="stat-row">
-                                <span class="stat-label">Average accuracy:</span>
-                                <span class="stat-value">${avgAccuracy}%</span>
+                            <div class="stat-item">
+                                <div class="stat-value">${globalStats.totalStudySessions || 0}</div>
+                                <div class="stat-label">Sessions</div>
                             </div>
                         </div>
                     </div>
             `);
             
-            // Chunk 2: Streak info
+            // Chunk 2: Recent performance
             await renderChunk(`
                     <div class="stats-card">
-                        <h3>🔥 Daily Streak</h3>
-                        <div class="streak-display">
-                            <div class="streak-number">${streak}</div>
-                            <div class="streak-label">${streak === 1 ? 'day' : 'days'} in a row</div>
-                            <div class="streak-info">
-                                ${globalStats.lastStudyDate === today ? 
-                                    '✅ Already studied today' : 
-                                    '💪 Keep studying!'}
+                        <h3>🎯 Recent Performance</h3>
+                        <div class="performance-details">
+                            <div class="perf-item">
+                                <span>Average session:</span>
+                                <strong>${Math.round((globalStats.totalCardsStudied || 0) / Math.max(globalStats.totalStudySessions || 1, 1))} cards</strong>
+                            </div>
+                            <div class="perf-item">
+                                <span>Cards today:</span>
+                                <strong>${recentActivity[recentActivity.length - 1]?.cards || 0}</strong>
+                            </div>
+                            <div class="perf-item">
+                                <span>Best day:</span>
+                                <strong>${Math.max(...recentActivity.map(day => day.cards))} cards</strong>
                             </div>
                         </div>
                     </div>
@@ -796,7 +810,7 @@ class AnkiApp {
             document.getElementById('stats-content').innerHTML = `
                 <div class="stats-placeholder">
                     <p>⚠️ Error loading statistics</p>
-                    <button class="control-btn" onclick="ankiApp.loadStatistics()">Try Again</button>
+                    <button class="control-btn" onclick="ankiApp.debugRefreshStats()">🔄 Try Again</button>
                 </div>
             `;
         }
@@ -1133,16 +1147,46 @@ class AnkiApp {
     }
 
     /**
-     * Debug function to refresh statistics
+     * Debug function to refresh statistics and clear cache
      * Call from browser console: ankiApp.debugRefreshStats()
      */
     async debugRefreshStats() {
         console.log('🔄 === REFRESHING STATISTICS ===');
         try {
+            // Clear the card sets cache first
+            this.flashcardManager.clearAvailableCardSetsCache();
+            console.log('🗑️ Cache cleared');
+            
+            // Reload statistics
             await this.loadStatistics();
             console.log('✅ Statistics refreshed successfully');
         } catch (error) {
             console.error('❌ Error refreshing statistics:', error);
+        }
+    }
+
+    /**
+     * Debug function to manually reload card sets
+     * Call from browser console: ankiApp.debugReloadCardSets()
+     */
+    async debugReloadCardSets() {
+        console.log('🔄 === RELOADING CARD SETS ===');
+        try {
+            // Clear cache
+            this.flashcardManager.clearAvailableCardSetsCache();
+            
+            // Force reload
+            const cardSets = await this.flashcardManager.getAvailableCardSets();
+            console.log('📚 Reloaded card sets:', cardSets);
+            
+            // Refresh the UI if we're on stats page
+            if (this.currentView === 'stats') {
+                await this.loadStatistics();
+            }
+            
+            console.log('✅ Card sets reloaded successfully');
+        } catch (error) {
+            console.error('❌ Error reloading card sets:', error);
         }
     }
 }

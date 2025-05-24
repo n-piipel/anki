@@ -3,29 +3,29 @@
  * Caches static resources and CSV files
  */
 
-const CACHE_NAME = 'panki-flashcards-v2.3';
-const STATIC_CACHE = 'panki-static-v2.3';
-const DATA_CACHE = 'panki-data-v2.3';
+const CACHE_NAME = 'panki-flashcards-v2.4';
+const STATIC_CACHE = 'panki-static-v2.4';
+const DATA_CACHE = 'panki-data-v2.4';
 
-// Static files for caching
+// Static files for caching - use relative paths for GitHub Pages
 const STATIC_FILES = [
-    '/',
-    '/index.html',
-    '/css/style.css',
-    '/js/app.js',
-    '/js/storage.js',
-    '/js/spaced-repetition.js',
-    '/js/flashcard.js'
+    './',
+    './index.html',
+    './css/style.css',
+    './js/app.js',
+    './js/storage.js',
+    './js/spaced-repetition.js',
+    './js/flashcard.js'
 ];
 
-// Data files for caching
+// Data files for caching - use relative paths for GitHub Pages
 const DATA_FILES = [
-    '/data/index.json',
-    '/data/greek-verbs-basic.csv',
-    '/data/greek-transport-navigation.csv',
-    '/data/greek-verbs-everyday.csv',
-    '/data/greek-connecting-words.csv',
-    '/data/greek-everyday-life.csv'
+    './data/index.json',
+    './data/greek-verbs-basic.csv',
+    './data/greek-transport-navigation.csv',
+    './data/greek-verbs-everyday.csv',
+    './data/greek-connecting-words.csv',
+    './data/greek-everyday-life.csv'
 ];
 
 /**
@@ -39,25 +39,41 @@ self.addEventListener('install', event => {
             // Cache static files
             caches.open(STATIC_CACHE).then(cache => {
                 console.log('📦 Caching static files');
-                return cache.addAll(STATIC_FILES);
+                return Promise.allSettled(
+                    STATIC_FILES.map(url => 
+                        cache.add(url).catch(error => {
+                            console.warn(`Failed to cache static file: ${url}`, error);
+                            return null; // Continue with other files
+                        })
+                    )
+                );
             }),
             
-            // Cache data files
+            // Cache data files with better error handling
             caches.open(DATA_CACHE).then(cache => {
                 console.log('📊 Caching data files');
-                return cache.addAll(DATA_FILES.map(url => {
-                    return fetch(url).then(response => {
-                        if (response.ok) {
-                            return cache.put(url, response);
-                        }
-                        console.warn(`Failed to cache: ${url}`);
-                    }).catch(error => {
-                        console.warn(`Failed to fetch for cache: ${url}`, error);
-                    });
-                }));
+                return Promise.allSettled(
+                    DATA_FILES.map(url => 
+                        fetch(url).then(response => {
+                            if (response.ok) {
+                                return cache.put(url, response);
+                            } else {
+                                console.warn(`Failed to fetch for cache: ${url} (${response.status})`);
+                                return null;
+                            }
+                        }).catch(error => {
+                            console.warn(`Failed to fetch for cache: ${url}`, error);
+                            return null;
+                        })
+                    )
+                );
             })
         ]).then(() => {
-            console.log('✅ Service Worker installed');
+            console.log('✅ Service Worker installed (some files may have failed)');
+            self.skipWaiting();
+        }).catch(error => {
+            console.error('❌ Service Worker installation failed:', error);
+            // Still try to activate even if caching fails
             self.skipWaiting();
         })
     );

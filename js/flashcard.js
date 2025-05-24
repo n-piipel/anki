@@ -9,6 +9,12 @@ class FlashcardManager {
         this.spacedRepetition = spacedRepetitionManager;
         this.cardSets = new Map();
         this.csvCache = new Map();
+        this.availableCardSetsCache = null;
+        this.lastCacheTime = 0;
+        this.cacheTimeout = 5 * 60 * 1000;
+        this.failedAttempts = new Set();
+        this.maxRetries = 3;
+        this.retryCount = 0;
     }
     
     /**
@@ -19,10 +25,31 @@ class FlashcardManager {
         try {
             console.log('🔍 Getting available card sets...');
             
+            // Check cache first - if recent and valid, use it
+            const now = Date.now();
+            if (this.availableCardSetsCache && 
+                (now - this.lastCacheTime) < this.cacheTimeout) {
+                console.log('📦 Using cached available card sets');
+                return this.availableCardSetsCache;
+            }
+
+            // Prevent infinite loops by limiting retries
+            if (this.retryCount >= this.maxRetries) {
+                console.warn('⚠️ Max retries reached, using demo data');
+                const demoSet = [this.createDemoCardSet()];
+                this.availableCardSetsCache = demoSet;
+                this.lastCacheTime = now;
+                return demoSet;
+            }
+
             // Try to load index.json file
             try {
                 console.log('📋 Attempting to load index.json...');
-                const indexResponse = await fetch('data/index.json');
+                
+                // Add timestamp to prevent browser caching issues
+                const indexUrl = `data/index.json?t=${now}`;
+                const indexResponse = await fetch(indexUrl);
+                
                 if (indexResponse.ok) {
                     const indexData = await indexResponse.json();
                     console.log('📋 Loading card sets from index.json:', indexData);
@@ -31,8 +58,17 @@ class FlashcardManager {
                     for (const cardSetInfo of indexData.cardSets) {
                         try {
                             console.log(`🔍 Checking file: ${cardSetInfo.filename}`);
+                            
+                            // Skip if this file has failed before
+                            if (this.failedAttempts.has(cardSetInfo.filename)) {
+                                console.warn(`⏭️ Skipping ${cardSetInfo.filename} - previously failed`);
+                                continue;
+                            }
+                            
                             // Verify the file actually exists
-                            const fileResponse = await fetch(`data/${cardSetInfo.filename}`, { method: 'HEAD' });
+                            const fileUrl = `data/${cardSetInfo.filename}?t=${now}`;
+                            const fileResponse = await fetch(fileUrl, { method: 'HEAD' });
+                            
                             if (fileResponse.ok) {
                                 console.log(`✅ File exists: ${cardSetInfo.filename}`);
                                 const cardSetData = await this.getCardSetInfo(cardSetInfo.filename, cardSetInfo);
@@ -40,32 +76,54 @@ class FlashcardManager {
                                 availableCardSets.push(cardSetData);
                             } else {
                                 console.warn(`📁 File ${cardSetInfo.filename} listed in index but not found`);
+                                this.failedAttempts.add(cardSetInfo.filename);
                             }
                         } catch (error) {
                             console.warn(`📁 Error checking ${cardSetInfo.filename}:`, error);
+                            this.failedAttempts.add(cardSetInfo.filename);
                         }
                     }
                     
                     if (availableCardSets.length > 0) {
                         console.log(`✅ Found ${availableCardSets.length} card sets from index.json`);
+                        // Cache successful result
+                        this.availableCardSetsCache = availableCardSets;
+                        this.lastCacheTime = now;
+                        this.retryCount = 0; // Reset retry count on success
                         return availableCardSets;
                     } else {
                         console.warn('⚠️ No valid card sets found in index.json');
+                        this.retryCount++;
                     }
                 } else {
                     console.log('📋 index.json not found or not accessible');
+                    this.retryCount++;
                 }
             } catch (error) {
                 console.log('📋 Error loading index.json:', error);
+                this.retryCount++;
             }
             
             // If index.json fails or has no valid card sets, return demo
             console.log('📝 No valid card sets found, creating demo set');
-            return [this.createDemoCardSet()];
+            const demoSet = [this.createDemoCardSet()];
+            
+            // Cache demo result for a shorter time
+            this.availableCardSetsCache = demoSet;
+            this.lastCacheTime = now;
+            
+            return demoSet;
             
         } catch (error) {
             console.error('Error getting available card sets:', error);
-            return [this.createDemoCardSet()];
+            this.retryCount++;
+            const demoSet = [this.createDemoCardSet()];
+            
+            // Cache error result 
+            this.availableCardSetsCache = demoSet;
+            this.lastCacheTime = Date.now();
+            
+            return demoSet;
         }
     }
     
@@ -466,5 +524,16 @@ class FlashcardManager {
         this.cardSets.clear();
         this.csvCache.clear();
         console.log('🧹 All cache cleared');
+    }
+
+    /**
+     * Clear the available card sets cache (useful for refreshing)
+     */
+    clearAvailableCardSetsCache() {
+        console.log('🗑️ Clearing available card sets cache');
+        this.availableCardSetsCache = null;
+        this.lastCacheTime = 0;
+        this.retryCount = 0;
+        this.failedAttempts.clear();
     }
 } 
