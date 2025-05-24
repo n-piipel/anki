@@ -3,9 +3,9 @@
  * Caches static resources and CSV files
  */
 
-const CACHE_NAME = 'anki-flashcards-v1.5';
-const STATIC_CACHE = 'static-v1.5';
-const DATA_CACHE = 'data-v1.5';
+const CACHE_NAME = 'anki-flashcards-v1.6';
+const STATIC_CACHE = 'static-v1.6';
+const DATA_CACHE = 'data-v1.6';
 
 // Static files for caching
 const STATIC_FILES = [

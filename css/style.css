@@ -375,6 +375,8 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition-fast);
+    height: 58px;
+    min-height: 58px;
 }
 
 .show-answer-btn:hover {
@@ -393,14 +395,16 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: var(--space-xs);
-    padding: var(--space-sm) var(--space-xs);
+    padding: var(--space-xs);
     border: 2px solid transparent;
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: var(--transition-fast);
     font-weight: 600;
-    min-height: 70px;
+    height: 58px;
+    min-height: 58px;
 }
 
 .difficulty-btn:hover {
@@ -864,7 +868,8 @@ body {
     }
     
     .difficulty-btn {
-        min-height: 60px;
+        height: 58px;
+        min-height: 58px;
         padding: var(--space-xs);
         font-size: 0.75rem;
     }
@@ -929,6 +934,7 @@ body {
     }
     
     .difficulty-btn {
+        height: 50px;
         min-height: 50px;
         padding: var(--space-xs);
         font-size: 0.75rem;
