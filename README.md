@@ -1,6 +1,6 @@
-# 🧠 Anki Flashcards - Spaced Repetition
+# 🧠 pAnki Flashcards - Spaced Repetition
 
-A web application for learning with flashcards using the SM-2 spaced repetition algorithm.
+A web application for learning with flashcards using the SM-2 spaced repetition algorithm. **pAnki** stands for "Pages Anki" - a GitHub Pages compatible flashcard app.
 
 ## 🌐 Demo
 

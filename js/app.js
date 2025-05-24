@@ -52,7 +52,7 @@ class AnkiApp {
     
     async init() {
         try {
-            console.log('🚀 Initializing Anki Flashcards App...');
+            console.log('🚀 Initializing pAnki Flashcards App...');
             
             // Performance optimization: Register Service Worker
             await this.registerServiceWorker();
@@ -332,12 +332,18 @@ class AnkiApp {
         
         totalCardsEl.textContent = this.studySession.cards.length;
         
-        // Setup card flip handler
-        const showAnswerBtn = document.getElementById('show-answer-btn');
+        // Setup card flip handler - make the entire front card clickable
         const flashcard = document.getElementById('flashcard');
+        const flashcardFront = flashcard.querySelector('.flashcard-front');
         
-        showAnswerBtn.addEventListener('click', () => {
-            flashcard.classList.add('flipped');
+        // Remove any existing listeners to avoid duplicates
+        flashcardFront.replaceWith(flashcardFront.cloneNode(true));
+        const newFlashcardFront = flashcard.querySelector('.flashcard-front');
+        
+        newFlashcardFront.addEventListener('click', () => {
+            if (!flashcard.classList.contains('flipped')) {
+                flashcard.classList.add('flipped');
+            }
         });
         
         // Setup difficulty buttons
@@ -491,8 +497,13 @@ class AnkiApp {
             </div>
         `;
         
-        // Hide answer button and difficulty buttons
-        document.getElementById('show-answer-btn').style.display = 'none';
+        // Hide difficulty buttons and make front card non-clickable
+        const flashcard = document.getElementById('flashcard');
+        const flashcardFront = flashcard.querySelector('.flashcard-front');
+        
+        flashcardFront.style.cursor = 'default';
+        flashcardFront.onclick = null;
+        
         document.querySelectorAll('.difficulty-btn').forEach(btn => {
             btn.style.display = 'none';
         });

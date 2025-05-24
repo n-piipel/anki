@@ -1,11 +1,11 @@
 /**
- * Service Worker for Anki Flashcards
+ * Service Worker for pAnki Flashcards
  * Caches static resources and CSV files
  */
 
-const CACHE_NAME = 'anki-flashcards-v1.6';
-const STATIC_CACHE = 'static-v1.6';
-const DATA_CACHE = 'data-v1.6';
+const CACHE_NAME = 'panki-flashcards-v1.8';
+const STATIC_CACHE = 'panki-static-v1.8';
+const DATA_CACHE = 'panki-data-v1.8';
 
 // Static files for caching
 const STATIC_FILES = [
@@ -251,7 +251,7 @@ self.addEventListener('push', event => {
     };
     
     event.waitUntil(
-        self.registration.showNotification('Anki Flashcards', options)
+        self.registration.showNotification('pAnki Flashcards', options)
     );
 });
 

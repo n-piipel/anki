@@ -1,4 +1,4 @@
-/* Anki Flashcards CSS - Version 1.1 - Buttons 4x1, Fast transitions */
+/* pAnki Flashcards CSS - Version 1.1 - Buttons 4x1, Fast transitions */
 /* Reset and Base Styles */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -340,13 +340,25 @@ body {
     border: 1px solid var(--border-primary);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     padding: var(--space-xl);
     box-shadow: var(--shadow-lg);
 }
 
+.flashcard-front {
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.flashcard-front:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary);
+}
+
 .flashcard-back {
     transform: rotateY(180deg);
+    justify-content: space-between;
 }
 
 .card-content {
@@ -355,6 +367,7 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
+    position: relative;
 }
 
 .question-text,
@@ -364,24 +377,20 @@ body {
     color: var(--text-primary);
 }
 
-.show-answer-btn {
-    align-self: center;
-    padding: var(--space-md) var(--space-xl);
-    background: var(--primary);
-    color: var(--text-inverse);
-    border: none;
-    border-radius: var(--radius-md);
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition-fast);
-    height: 58px;
-    min-height: 58px;
+.question-text::after {
+    content: "👆 Click to reveal answer";
+    position: absolute;
+    bottom: -2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    opacity: 0.7;
+    transition: opacity var(--transition-fast);
 }
 
-.show-answer-btn:hover {
-    background: var(--primary-hover);
-    transform: translateY(-1px);
+.flashcard-front:hover .question-text::after {
+    opacity: 1;
 }
 
 /* Difficulty Buttons */
