@@ -340,7 +340,6 @@ body {
     border: 1px solid var(--border-primary);
     padding: var(--space-xl);
     box-shadow: var(--shadow-lg);
-    position: relative;
 }
 
 .flashcard-front {
@@ -404,7 +403,7 @@ body {
     bottom: var(--space-xl);
     left: var(--space-xl);
     right: var(--space-xl);
-    height: 80px;
+    height: 100px;
 }
 
 .difficulty-btn {
@@ -419,8 +418,8 @@ body {
     cursor: pointer;
     transition: var(--transition-fast);
     font-weight: 600;
-    height: 80px;
-    min-height: 80px;
+    height: 100px;
+    min-height: 100px;
     box-shadow: var(--shadow-sm);
 }
 

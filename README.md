@@ -103,8 +103,6 @@ anki/
 ├── data/
 │   ├── general-knowledge.csv
 │   └── programming-terms.csv
-├── scripts/
-│   └── prd.txt            # Product Requirements Document
 └── README.md
 ```
 
